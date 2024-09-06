@@ -1,0 +1,26 @@
+.header-container {
+    background-image: url('./assets/images/dark-grass.jpg');
+    background-size: cover; /* Cover the entire container with the background image */
+    background-position: center; /* Center the background image within the container */
+    min-height: 50vh; /* Set a minimum height to ensure the container covers the entire viewport */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white; /* Set text color to ensure readability */
+    text-align: center; /* Center align text within the container */
+  }
+
+  .responsive-icon {
+    width: 350px; /* or any desired width */
+    height: 300px;
+    border-radius: 30px; /* Adjust the value as needed */
+    }
+
+.header-text h1 {
+  font-size: 5rem; /* Adjust size as needed */
+}
+
+.header-text p {
+  font-size: 2.50rem; /* Adjust size as needed */
+}

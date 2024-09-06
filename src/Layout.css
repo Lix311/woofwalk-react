@@ -1,0 +1,35 @@
+/* Ensure the header is fixed at the top */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    width: 100%;
+    background: white; /* Ensure header is visually separated from the content */
+  }
+  
+  /* Ensure the footer is at the bottom of the content */
+  footer {
+    position: relative; /* Footer is positioned naturally */
+    width: 100%;
+    background: white; /* Ensure footer is visually separated from the content */
+  }
+  
+  /* Ensure content area grows to fill available space */
+  body, html {
+    height: 100%;
+    margin: 0;
+  }
+  
+  .main-wrapper {
+    min-height: 100vh; /* Ensure wrapper covers at least the full viewport height */
+    display: flex;
+    flex-direction: column; /* Stack header, content, and footer vertically */
+  }
+  
+  .content {
+    flex: 1; /* Allow content to grow and push footer down */
+    /*padding-top: 60px;  Adjust based on header height */
+    padding-bottom: 60px; /* Adjust based on footer height */
+  }
