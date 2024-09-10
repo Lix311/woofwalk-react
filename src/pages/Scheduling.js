@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, ListGroup, Card, Button } from 'react-bootstrap';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Container, Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useAuth } from '../context/AuthContext';
+import { useBooking } from '../context/BookingsContext';
 
 const Scheduling = () => {
   const [bookings, setBookings] = useState([]);
@@ -10,35 +11,61 @@ const Scheduling = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dogs, setDogs] = useState([]);
 
   const { authState } = useAuth();
+  const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking } = useBooking();
+
+  const fetchBookings = useCallback(async () => {
+    if (!authState?.user?.id) {
+      console.log('No user ID available.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const ownerId = authState.user.id;
+      const response = await fetch(`http://localhost:5000/api/bookings/owner/${ownerId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setBookings(data);
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError('Failed to fetch bookings');
+    } finally {
+      setLoading(false);
+    }
+  }, [authState]);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchDogs = async () => {
       if (!authState?.user?.id) {
         console.log('No user ID available.');
-        setLoading(false);
         return;
       }
 
       try {
         const ownerId = authState.user.id;
-        const response = await fetch(`http://localhost:5000/api/bookings/owner/${ownerId}`);
+        const response = await fetch(`http://localhost:5000/api/dogs/owner/${ownerId}`);
+        
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setBookings(data);
+        setDogs(data);
       } catch (err) {
-        console.error('Error fetching bookings:', err);
-        setError('Failed to fetch bookings');
-      } finally {
-        setLoading(false);
+        console.error('Error fetching dogs:', err);
       }
     };
 
-    fetchBookings();
+    fetchDogs();
   }, [authState]);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   useEffect(() => {
     const generateTimeSlots = () => {
@@ -53,7 +80,6 @@ const Scheduling = () => {
 
     const slots = generateTimeSlots();
 
-    // Filter out the slots that are already booked
     const filteredSlots = slots.filter((slot) => {
       return !bookings.some(
         (booking) =>
@@ -70,17 +96,10 @@ const Scheduling = () => {
     setSelectedDate(date);
   };
 
-  const handleBookWalk = (timeSlot) => {
-    // Handle booking logic here
-    console.log('Booking time slot:', timeSlot);
-    // You might want to navigate to a booking page or show a form
-  };
-
   if (!authState.user) return <p>Please log in to view your bookings.</p>;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  // Filter bookings to only include those for the selected date
   const filteredBookings = bookings.filter(
     (booking) => new Date(booking.walkId.startTime).toDateString() === selectedDate.toDateString()
   );
@@ -101,13 +120,26 @@ const Scheduling = () => {
         <Col md={4}>
           <Card>
             <Card.Body>
-              <Card.Title>Available Times for {selectedDate.toDateString()}</Card.Title>
+              <Card.Title>Select a Dog</Card.Title>
+              <Form.Group controlId="selectDog">
+                <Form.Label>Choose a Dog for the Walk</Form.Label>
+                <Form.Control as="select" onChange={(e) => setSelectedDog(e.target.value)} value={selectedDog}>
+                  <option value="">Select a Dog</option>
+                  {dogs.map((dog) => (
+                    <option key={dog._id} value={dog._id}>
+                      {dog.name}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+
+              <Card.Title className="mt-4">Available Times for {selectedDate.toDateString()}</Card.Title>
               {availableTimes.length > 0 ? (
                 <ListGroup>
                   {availableTimes.map((timeSlot, index) => (
                     <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
                       {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      <Button variant="primary" onClick={() => handleBookWalk(timeSlot)}>Book Walk</Button>
+                      <Button variant="primary" onClick={() => handleBookWalk(timeSlot, authState, fetchBookings)}>Book Walk</Button>
                     </ListGroup.Item>
                   ))}
                 </ListGroup>
@@ -121,21 +153,22 @@ const Scheduling = () => {
         <Col md={4}>
           <Card>
             <Card.Body>
-              <Card.Title>Your Scheduled Walks</Card.Title>
+              <Card.Title>Your Bookings for {selectedDate.toDateString()}</Card.Title>
               <ListGroup>
-                {filteredBookings.length > 0 ? (
-                  filteredBookings.map((booking) => (
-                    <ListGroup.Item key={booking._id}>
-                      <strong>Dog:</strong> {booking.dogId.name} <br />
-                      <strong>Walker:</strong> {booking.walkerId.firstName} {booking.walkerId.lastName} <br />
-                      <strong>Start Time:</strong> {new Date(booking.walkId.startTime).toLocaleString()} <br />
-                      <strong>End Time:</strong> {new Date(booking.walkId.endTime).toLocaleString()}
-                    </ListGroup.Item>
-                  ))
-                ) : (
-                  <p>No scheduled walks for the selected date.</p>
-                )}
-              </ListGroup>
+  {filteredBookings.map((booking) => (
+    <ListGroup.Item key={booking._id} className="d-flex justify-content-between align-items-center">
+      <div>
+        <strong>Dog:</strong> {booking.dogId.name} <br />
+        <strong>Time:</strong> {new Date(booking.walkId.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} <br />
+        <strong>Date:</strong> {new Date(booking.walkId.startTime).toLocaleDateString()}
+      </div>
+      <Button variant="danger" onClick={() => cancelBooking(booking._id, booking.walkId._id, fetchBookings)}>
+        Cancel Walk
+      </Button>
+    </ListGroup.Item>
+  ))}
+</ListGroup>
+
             </Card.Body>
           </Card>
         </Col>

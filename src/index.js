@@ -8,17 +8,21 @@ import { ModalProvider } from './context/ModalContext'; // Import ModalProvider
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { PetProvider } from './context/PetContext';
+import { BookingProvider } from './context/BookingsContext';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
       <AuthProvider>
-        <ModalProvider>
-          <PetProvider>
-            <App />
-          </PetProvider>
-        </ModalProvider>
+      <BookingProvider>
+          <ModalProvider>
+            <PetProvider>
+              <App />
+            </PetProvider>
+          </ModalProvider>
+      </BookingProvider>
       </AuthProvider>
     </Router>
   </React.StrictMode>
