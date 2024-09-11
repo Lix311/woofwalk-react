@@ -1,0 +1,49 @@
+/* MyInfo.css */
+
+/* Scope styles only to the .my-info-container class */
+.my-info-container {
+    max-width: 600px;
+    margin-top: 20px;
+  }
+  
+  /* Styles specific to the MyInfo card */
+  .my-info-card {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style for the header within MyInfo */
+  .my-info-card h1 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Ensure labels within the form in MyInfo are bold */
+  .my-info-card .form-label {
+    font-weight: bold;
+  }
+  
+  /* Style the form controls */
+  .my-info-card .form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+  }
+  
+  /* Style the button within MyInfo */
+  .my-info-card .btn-primary {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    width: 100%; /* Full-width button */
+  }
+  
+  .my-info-card .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  

@@ -1,13 +1,47 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-  }
-
-.page-container {
-  min-height: 100vh; /* Ensure the container covers the full viewport height */
-  display: flex;
-  flex-direction: column;
+.pet-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  width: 100%; /* Full width of its container */
+  max-width: 300px; /* Adjust width as needed */
+  height: auto; /* Height adjusts automatically based on content */
+  margin: 0 auto; /* Center the card */
 }
 
-  
+.pet-card:hover {
+  transform: translateY(-5px);
+}
+
+.pet-card img {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  height: 150px; /* Adjust height of the image */
+  object-fit: cover;
+}
+
+.add-pet-button {
+  flex-shrink: 0;
+  min-width: 200px; /* Adjust the width to match the desired length */
+}
+
+.pet-details-box {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 90%; /* Adjust width to fit content */
+  margin: 0 auto; /* Center the box */
+}
+
+.empty-details {
+  text-align: center;
+  color: #6c757d;
+}
+
+.click-note {
+  margin-top: 20px;
+  margin-left: 400px;
+  font-style: italic;
+  color: #6c757d;
+  text-align: center;
+}

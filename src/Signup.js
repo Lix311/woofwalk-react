@@ -10,6 +10,9 @@ function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [altNumber, setAltNumber] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -31,6 +34,9 @@ function SignUp() {
           lastName,
           email,
           password,
+          phoneNumber,
+          address,
+          altNumber,
           role: 'owner', // or any other role as needed
         }),
       });
@@ -114,6 +120,36 @@ function SignUp() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label className="text-black">Phone Number</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="123-456-7890"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label className="text-black">Address</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="123 Main St, Apt 4B"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label className="text-black">Alternate Number</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="098-765-4321"
+              value={altNumber}
+              onChange={(e) => setAltNumber(e.target.value)}
             />
           </Form.Group>
 
