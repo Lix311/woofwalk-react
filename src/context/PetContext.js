@@ -40,8 +40,30 @@ export const PetProvider = ({ children }) => {
     }
   }, [handlePetDeleted]);
 
+  // Function to update a pet's image
+  const updatePetImage = useCallback(async (petId, imageUrl, token) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ imageUrl }) // Update the imageUrl field
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update pet image');
+      }
+
+      // const updatedPet = await response.json();
+      // You can handle additional logic here, such as updating state or triggering callbacks
+    } catch (error) {
+      console.error('Error updating pet image:', error);
+    }
+  }, []);
+
   return (
-    <PetContext.Provider value={{ handlePetAdded, registerHandlePetAdded, deletePet, registerHandlePetDeleted }}>
+    <PetContext.Provider value={{ handlePetAdded, registerHandlePetAdded, deletePet, registerHandlePetDeleted, updatePetImage }}>
       {children}
     </PetContext.Provider>
   );
