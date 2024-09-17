@@ -5,25 +5,32 @@ const PetContext = createContext();
 export const PetProvider = ({ children }) => {
   const [handlePetAdded, setHandlePetAdded] = useState(null);
   const [handlePetDeleted, setHandlePetDeleted] = useState(null);
+  const [handlePetImageUpdated, setHandlePetImageUpdated] = useState(null);
+  const [handlePetUpdated, setHandlePetUpdated] = useState(null);
 
-  // Function to register the handlePetAdded callback
-  const registerHandlePetAdded = useCallback((callback) => {
-    setHandlePetAdded(() => callback);
+  const registerHandlePetImageUpdated = useCallback((handler) => {
+    setHandlePetImageUpdated(() => handler);
   }, []);
 
-  // Function to register the handlePetDeleted callback
-  const registerHandlePetDeleted = useCallback((callback) => {
-    setHandlePetDeleted(() => callback);
+  const registerHandlePetAdded = useCallback((handler) => {
+    setHandlePetAdded(() => handler);
   }, []);
 
-  // Function to delete a pet
+  const registerHandlePetDeleted = useCallback((handler) => {
+    setHandlePetDeleted(() => handler);
+  }, []);
+
+  const registerHandlePetUpdated = useCallback((handler) => {
+    setHandlePetUpdated(() => handler);
+  }, []);
+
   const deletePet = useCallback(async (petId, token) => {
-    console.log("delete pet being called in context!!!")
     try {
       const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
         method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json' // Include auth token if required
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
       });
 
@@ -31,7 +38,6 @@ export const PetProvider = ({ children }) => {
         throw new Error('Failed to delete pet');
       }
 
-      // Trigger the callback after successful deletion
       if (handlePetDeleted) {
         handlePetDeleted(petId);
       }
@@ -40,13 +46,39 @@ export const PetProvider = ({ children }) => {
     }
   }, [handlePetDeleted]);
 
-  // Function to update a pet's image
+  const editPet = useCallback(async (petId, petData, token) => {
+    console.log(petId, petData)
+    try {
+      const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(petData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update pet');
+      }
+  
+      const updatedPet = await response.json();
+  
+      if (handlePetUpdated) {
+        handlePetUpdated(updatedPet);
+      }
+    } catch (error) {
+      console.error('Error updating pet:', error);
+    }
+  }, [handlePetUpdated]);
+
   const updatePetImage = useCallback(async (petId, imageUrl, token) => {
     try {
       const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ imageUrl }) // Update the imageUrl field
       });
@@ -55,15 +87,27 @@ export const PetProvider = ({ children }) => {
         throw new Error('Failed to update pet image');
       }
 
-      // const updatedPet = await response.json();
-      // You can handle additional logic here, such as updating state or triggering callbacks
+      // Notify the registered handler about the image update
+      if (handlePetImageUpdated) {
+        handlePetImageUpdated(petId, imageUrl);
+      }
     } catch (error) {
       console.error('Error updating pet image:', error);
     }
-  }, []);
+  }, [handlePetImageUpdated]);
 
   return (
-    <PetContext.Provider value={{ handlePetAdded, registerHandlePetAdded, deletePet, registerHandlePetDeleted, updatePetImage }}>
+    <PetContext.Provider value={{ 
+      handlePetAdded, 
+      handlePetUpdated, 
+      registerHandlePetAdded, 
+      registerHandlePetImageUpdated, 
+      deletePet, 
+      registerHandlePetDeleted, 
+      registerHandlePetUpdated, // Added this line
+      updatePetImage,
+      editPet
+    }}>
       {children}
     </PetContext.Provider>
   );
