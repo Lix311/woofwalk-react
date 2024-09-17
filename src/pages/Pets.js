@@ -44,8 +44,13 @@ const Pets = () => {
   }, [fetchPets]);
 
   const handleDeletePet = (petId) => {
-    deletePet(petId, authState.token);
-  };
+  deletePet(petId, authState.token);
+  
+  // Update selectedPet to null after deletion
+  if (selectedPet && selectedPet._id === petId) {
+    setSelectedPet(null);
+  }
+};
 
   const handleEditPet = () => {
     if (selectedPet) {
@@ -205,7 +210,7 @@ const Pets = () => {
     Edit Pet
   </Button>
 )}
-
+          {!isEditing && (
             <Button
               className="button-spacing"
               variant="danger"
@@ -216,6 +221,7 @@ const Pets = () => {
             >
               Delete Pet
             </Button>
+          )}
             {uploading && <p className="text-muted">Uploading...</p>}
             {uploadError && <p className="text-danger">{uploadError}</p>}
           </Card.Body>
@@ -299,11 +305,10 @@ const Pets = () => {
               </div>
               <div className="form-group mb-3">
                 <label htmlFor="petVaccinationStatus">Vaccination Status:</label>
-                <input
-                  type="text"
-                  id="petVaccinationStatus"
-                  value={selectedPet.vaccinationStatus || ''}
-                  onChange={(e) => setSelectedPet({ ...selectedPet, vaccinationStatus: e.target.value })}
+                <textarea
+                  id="petVaccinations"
+                  value={selectedPet.vaccinations || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, vaccinations: e.target.value })}
                   className="form-control"
                 />
               </div>
@@ -429,7 +434,7 @@ const Pets = () => {
               <p>Size: {selectedPet.size}</p>
               <p>Weight: {selectedPet.weight} lbs</p>
               <p>Medical Conditions: {selectedPet.medicalConditions || 'None'}</p>
-              <p>Vaccination Status: {selectedPet.vaccinationStatus || 'Up to date'}</p>
+              <p>Vaccinations: {selectedPet.vaccinations || ''}</p>
               <p>Vet Contact:</p>
               {selectedPet.vetContact ? (
                 <ul>

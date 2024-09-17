@@ -26,6 +26,50 @@ export const PetProvider = ({ children }) => {
 
   const deletePet = useCallback(async (petId, token) => {
     try {
+      // Step 1: Fetch and delete bookings associated with the pet
+      const bookingsResponse = await fetch(`http://localhost:5000/api/bookings?dogId=${petId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+  
+      if (!bookingsResponse.ok) {
+        throw new Error('Failed to fetch bookings for the pet');
+      }
+  
+      const bookings = await bookingsResponse.json();
+      const walkIds = [];
+  
+      // Collect walk IDs associated with the bookings
+      for (const booking of bookings) {
+        walkIds.push(booking.walkId);
+      }
+  
+      // Step 2: Delete associated walks
+      for (const walkId of walkIds) {
+        await fetch(`http://localhost:5000/api/walks/${walkId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+      }
+  
+      // Step 3: Delete associated bookings
+      for (const booking of bookings) {
+        await fetch(`http://localhost:5000/api/bookings/${booking._id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+        });
+      }
+  
+      // Step 4: Delete the pet
       const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
         method: 'DELETE',
         headers: {
@@ -33,18 +77,19 @@ export const PetProvider = ({ children }) => {
           'Authorization': `Bearer ${token}`
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to delete pet');
       }
-
+  
       if (handlePetDeleted) {
         handlePetDeleted(petId);
       }
     } catch (error) {
-      console.error('Error deleting pet:', error);
+      console.error('Error deleting pet and related records:', error);
     }
   }, [handlePetDeleted]);
+  
 
   const editPet = useCallback(async (petId, petData, token) => {
     console.log(petId, petData)
