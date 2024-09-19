@@ -1,11 +1,17 @@
+/* General container styling */
+.container {
+  padding: 1rem;
+}
+
+/* Pet card styling */
 .pet-card {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out;
-  width: 100%; /* Full width of its container */
-  max-width: 300px; /* Adjust width as needed */
-  height: auto; /* Height adjusts automatically based on content */
-  margin: 0 auto; /* Center the card */
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin: 0 auto;
 }
 
 .pet-card:hover {
@@ -14,21 +20,21 @@
 
 .card-img-container {
   position: relative;
-  width: 150px; /* Fixed width to keep the circle size consistent */
-  height: 150px; /* Fixed height to keep the circle size consistent */
-  margin: 0 auto; /* Center the image container */
-  overflow: hidden; /* Ensure that the image doesn't overflow */
-  border-radius: 50%; /* Make the container a circle */
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer; /* Show pointer cursor to indicate clickable */
+  cursor: pointer;
 }
 
 .card-img-container img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image covers the circle without distortion */
+  object-fit: cover;
 }
 
 .file-input {
@@ -38,58 +44,57 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
-  opacity: 0; /* Hide the file input */
+  opacity: 0;
 }
 
 .pet-details-box {
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%; /* Ensure it takes the full width of its container */
-  max-width: 600px; /* Adjust this as needed */
-  margin-left: auto;
-  margin-right: auto; /* Center the box */
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 /* Add Pet Button */
 .btn-add-pet {
-  font-size: 16px; /* Adjust font size */
-  font-weight: 600; /* Font weight for emphasis */
-  background-color: #007bff; /* Primary button color */
-  border-color: #007bff; /* Border color to match the button */
-  padding: 10px 20px; /* Padding for button size */
-  border-radius: 5px; /* Rounded corners */
-  margin-left: 20px;
-  min-width: 220px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #007bff;
+  border-color: #007bff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin: 0 auto;
+  display: block;
 }
 
 .btn-add-pet:hover {
-  background-color: #0056b3; /* Darker color on hover */
-  border-color: #004494; /* Darker border on hover */
+  background-color: #0056b3;
+  border-color: #004494;
 }
 
 /* Click on Pet to Switch Details */
 .click-note {
   margin-top: 20px;
-  margin-left: 400px;
   font-style: italic;
   color: #6c757d;
   text-align: center;
 }
 
+/* Button spacing */
 .button-spacing {
-  margin-right: 10px; /* Adjust the spacing as needed */
+  margin-right: 10px;
 }
 
-/* Remove margin from the last button if needed */
 .button-spacing:last-child {
   margin-right: 0;
 }
 
 /* Small text styling */
 .small-text {
-  font-size: 0.75rem; /* Adjust size as needed */
-  margin-top: 0.5rem; /* Optional: adjust spacing from other elements */
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 /* Profile image wrapper styling */
@@ -103,17 +108,52 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   padding: 0.5rem;
   border-radius: 0.5rem;
-  font-size: 0.75rem; /* Adjust as needed */
+  font-size: 0.75rem;
   text-align: center;
   width: 100%;
-  pointer-events: none; /* Allow clicks to pass through the text */
+  pointer-events: none;
 }
 
 /* Hide the edit button when isEditing is true */
 .edit-button-hidden {
   display: none;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .pet-card {
+    max-width: 100%;
+  }
+
+  .click-note {
+    font-size: 0.875rem;
+  }
+
+  .btn-add-pet {
+    font-size: 14px;
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .pet-details-box {
+    padding: 0.5rem;
+    max-width: 100%;
+  }
+
+  /* Center the My Pets text and make the button full width on mobile */
+  .my-pets-container {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .btn-add-pet {
+    width: calc(50% - 1rem); /* Set width to 50% and account for padding */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
 }

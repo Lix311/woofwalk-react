@@ -1,0 +1,30 @@
+
+
+/* Ensure Navbar Collapse overlaps content on mobile devices */
+@media (max-width: 767.98px) {
+    .navbar-collapse {
+      position: absolute;
+      top: 100%; /* Position it right below the navbar */
+      left: 0;
+      right: 0;
+      background-color: #add8e6; /* Match the background color of the navbar */
+      z-index: 1000; /* Ensure it overlaps other content */
+      display: block;
+    }
+  
+    .navbar-collapse .nav-link,
+    .navbar-collapse .navbar-text,
+    .navbar-collapse .btn {
+      display: block;
+      margin: 10px auto; /* Center the items and add some spacing */
+      text-align: center;
+    }
+  }
+
+  /* Override container padding */
+.container {
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  

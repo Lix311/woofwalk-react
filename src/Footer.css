@@ -1,0 +1,25 @@
+.footer-bg {
+    background-color: #add8e6; /* Light blue background */
+  }
+  
+  .footer-bg img {
+    max-width: 50px;
+    max-height: 50px;
+  }
+  
+  .footer-bg p {
+    color: #6c757d; /* Light grey text for secondary style */
+    font-size: 0.9rem; /* Slightly smaller text size */
+    margin-top: 5px; /* Space between logo and text */
+  }
+  
+  @media (max-width: 768px) {
+    .footer-bg {
+      padding: 10px 0;
+    }
+  
+    .footer-bg p {
+      font-size: 0.85rem;
+    }
+  }
+  

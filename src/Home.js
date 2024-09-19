@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import './Home.css';
 import dogWalkingIcon from './assets/images/dog-walking-icon.png';
 import dogTrainingIcon from './assets/images/dog-training-icon.png';
@@ -93,30 +93,21 @@ function Home() {
               <Image className="responsive-icon" src={dog1} alt="dog" fluid />
             </div>
             <h3 className="fs-2 text-body-emphasis mb-5">Happy and Healthy</h3>
-            <p className="feature-text">Paragraph of text beneath the heading to explain the heading.</p>
-            <Link to="/call-to-action" className="icon-link">
-              Call to action
-            </Link>
+            <p className="feature-text">Our walks keep your dog happy and healthy, blending fun and fitness into every outing.</p>
           </Col>
           <Col className="feature col text-center">
             <div className="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
               <Image className="responsive-icon" src={dog2} alt="dog" fluid />
             </div>
             <h3 className="fs-2 text-body-emphasis mb-5">One on One Attention</h3>
-            <p className="feature-text">Paragraph of text beneath the heading to explain the heading.</p>
-            <Link to="/call-to-action" className="icon-link">
-              Call to action
-            </Link>
+            <p className="feature-text">Enjoy personalized care with one-on-one walks tailored to your dog’s needs and preferences.</p>
           </Col>
           <Col className="feature col text-center">
             <div className="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
               <Image className="responsive-icon" src={dog3} alt="dog" fluid />
             </div>
             <h3 className="fs-2 text-body-emphasis mb-5">All Breeds Welcome</h3>
-            <p className="feature-text">Paragraph of text beneath the heading to explain the heading.</p>
-            <Link to="/call-to-action" className="icon-link">
-              Call to action
-            </Link>
+            <p className="feature-text">We cater to all breeds and sizes, ensuring every dog receives the care they deserve.</p>
           </Col>
         </Row>
       </Container>

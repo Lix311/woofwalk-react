@@ -3,6 +3,7 @@ import { Navbar, Nav, Button, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { useModal } from './context/ModalContext';  // Import useModal from your context
+import './Header.css'; // Import the CSS file
 
 const Header = () => {
   const { toggleLoginModal, toggleSignupModal } = useModal();  // Use useModal to get modal functions
@@ -44,10 +45,10 @@ const Header = () => {
               <Button variant="primary" onClick={logout} className="me-2">Logout</Button>
             </>
           ) : (
-            <form className="d-flex">
+            <div className="d-flex">
               <Button variant="primary" onClick={toggleLoginModal} className="me-2">Login</Button>
               <Button variant="outline-primary" onClick={toggleSignupModal}>Signup</Button>
-            </form>
+            </div>
           )}
         </Navbar.Collapse>
       </Container>
