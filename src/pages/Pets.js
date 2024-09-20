@@ -196,6 +196,7 @@ const Pets = () => {
                     variant="warning"
                     onClick={(e) => {
                       e.stopPropagation();
+                      setSelectedPet(pet); // Set the selected pet here
                       setIsEditing(true);
                     }}
                   >
