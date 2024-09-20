@@ -17,7 +17,7 @@ const Pets = () => {
   const { toggleAddPetModal } = useModal();
   const { registerHandlePetAdded, registerHandlePetImageUpdated, registerHandlePetDeleted, registerHandlePetUpdated, deletePet, editPet } = usePet();
   const fileInputRefs = useRef({});
-  const BASE_URL="https://woofwalk-backend.herokuapp.com"
+  const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
 
   const fetchPets = useCallback(async () => {
     if (!authState || !authState.user || !authState.user.id) return;

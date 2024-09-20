@@ -11,7 +11,7 @@ const availableTimeSlots = {
   '2024-09-07': ['09:00 AM', '12:00 PM', '04:00 PM'],
 };
 
-const BASE_URL="https://woofwalk-backend.herokuapp.com"
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
 
 const CalendarWithTimeSlots = () => {
   const [selectedDate, setSelectedDate] = useState(null);

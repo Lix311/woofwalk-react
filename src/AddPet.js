@@ -8,7 +8,7 @@ const AddPet = () => {
   const { showAddPetModal, toggleAddPetModal } = useModal();
   const { authState } = useAuth();
   const { handlePetAdded } = usePet();
-  const BASE_URL="https://woofwalk-backend.herokuapp.com"
+  const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
 
   const [petData, setPetData] = useState({
     name: '',

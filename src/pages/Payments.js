@@ -6,7 +6,7 @@ const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const BASE_URL="https://woofwalk-backend.herokuapp.com"
+  const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
 
   const { authState } = useAuth(); // Access authState from useAuth
 
