@@ -141,7 +141,7 @@ const Pets = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
-  return (
+  return ( 
     <Container className="mt-4">
       <Row className="d-block d-md-flex justify-content-between align-items-center mb-4">
         <Col xs={12} className="text-center text-md-left">
@@ -225,7 +225,190 @@ const Pets = () => {
             <div className="pet-details-box p-4 bg-light rounded shadow-sm">
               {isEditing ? (
                 <form onSubmit={(e) => { e.preventDefault(); handleEditPet(); }}>
-                  {/* Form fields */}
+                  <div className="form-group mb-3">
+                <label htmlFor="petName">Name:</label>
+                <input
+                  type="text"
+                  id="petName"
+                  value={selectedPet.name}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, name: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petBreed">Breed:</label>
+                <input
+                  type="text"
+                  id="petBreed"
+                  value={selectedPet.breed}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, breed: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petAge">Age:</label>
+                <input
+                  type="number"
+                  id="petAge"
+                  value={selectedPet.age}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, age: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petGender">Gender:</label>
+                <input
+                  type="text"
+                  id="petGender"
+                  value={selectedPet.gender}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, gender: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petSize">Size:</label>
+                <input
+                  type="text"
+                  id="petSize"
+                  value={selectedPet.size}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, size: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petWeight">Weight:</label>
+                <input
+                  type="number"
+                  id="petWeight"
+                  value={selectedPet.weight}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, weight: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petMedicalConditions">Medical Conditions:</label>
+                <textarea
+                  id="petMedicalConditions"
+                  value={selectedPet.medicalConditions || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, medicalConditions: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petVaccinationStatus">Vaccination Status:</label>
+                <textarea
+                  id="petVaccinations"
+                  value={selectedPet.vaccinations || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, vaccinations: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petVetContact">Vet Contact Name:</label>
+                <input
+                  type="text"
+                  id="petVetContact"
+                  value={selectedPet.vetContact?.name || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, vetContact: { ...selectedPet.vetContact, name: e.target.value } })}
+                  className="form-control"
+                />
+                <label htmlFor="petVetContactPhone" className="mt-2">Vet Contact Phone:</label>
+                <input
+                  type="tel"
+                  id="petVetContactPhone"
+                  value={selectedPet.vetContact?.phone || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, vetContact: { ...selectedPet.vetContact, phone: e.target.value } })}
+                  className="form-control"
+                />
+                <label htmlFor="petVetContactAddress" className="mt-2">Vet Contact Address:</label>
+                <input
+                  type="text"
+                  id="petVetContactAddress"
+                  value={selectedPet.vetContact?.address || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, vetContact: { ...selectedPet.vetContact, address: e.target.value } })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petTemperament">Temperament:</label>
+                <input
+                  type="text"
+                  id="petTemperament"
+                  value={selectedPet.temperament || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, temperament: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="petSocialization">Socialization:</label>
+                <input
+                  type="text"
+                  id="petSocialization"
+                  value={selectedPet.socialization || ''}
+                  onChange={(e) => setSelectedPet({ ...selectedPet, socialization: e.target.value })}
+                  className="form-control"
+                />
+              </div>
+              <div className="form-group mb-3">
+  <label htmlFor="preferredTimes">Preferred Walk Times:</label>
+  <input
+    type="text"
+    id="preferredTimes"
+    value={selectedPet.walkPreferences?.preferredTimes.join(', ') || ''}
+    onChange={(e) => {
+      const timesArray = e.target.value.split(',').map((time) => time.trim());
+      setSelectedPet({ 
+        ...selectedPet, 
+        walkPreferences: { 
+          ...selectedPet.walkPreferences, 
+          preferredTimes: timesArray 
+        } 
+      });
+    }}
+    className="form-control"
+    placeholder="Enter preferred times separated by commas (e.g., Morning, Afternoon)"
+  />
+</div>
+
+<div className="form-group mb-3">
+  <label htmlFor="preferredRoutes">Preferred Walk Routes:</label>
+  <input
+    type="text"
+    id="preferredRoutes"
+    value={selectedPet.walkPreferences?.preferredRoutes.join(', ') || ''}
+    onChange={(e) => {
+      const routesArray = e.target.value.split(',').map((route) => route.trim());
+      setSelectedPet({ 
+        ...selectedPet, 
+        walkPreferences: { 
+          ...selectedPet.walkPreferences, 
+          preferredRoutes: routesArray 
+        } 
+      });
+    }}
+    className="form-control"
+    placeholder="Enter preferred routes separated by commas (e.g., Park, Riverside)"
+  />
+</div>
+
+<div className="form-group mb-3">
+  <label htmlFor="pace">Preferred Walk Pace:</label>
+  <input
+    type="text"
+    id="pace"
+    value={selectedPet.walkPreferences?.pace || ''}
+    onChange={(e) => setSelectedPet({
+      ...selectedPet,
+      walkPreferences: {
+        ...selectedPet.walkPreferences,
+        pace: e.target.value
+      }
+    })}
+    className="form-control"
+    placeholder="Enter pace (e.g., Fast, Slow)"
+  />
+</div>
+
                   <Button type="submit" variant="success" className="button-spacing">
                     Save Pet
                   </Button>
