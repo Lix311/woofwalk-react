@@ -14,6 +14,7 @@ function SignUp() {
   const [address, setAddress] = useState('');
   const [altNumber, setAltNumber] = useState('');
   const [error, setError] = useState('');
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +25,7 @@ function SignUp() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${BASE_URL}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

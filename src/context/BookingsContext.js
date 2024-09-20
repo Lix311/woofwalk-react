@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 
 const BookingContext = createContext();
+const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
 export const BookingProvider = ({ children }) => {
   const [selectedDog, setSelectedDog] = useState(null);
@@ -27,7 +28,7 @@ export const BookingProvider = ({ children }) => {
   
     try {
       // Step 1: Create the walk
-      const walkResponse = await fetch('http://localhost:5000/api/walks', {
+      const walkResponse = await fetch(`${BASE_URL}/api/walks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +52,7 @@ export const BookingProvider = ({ children }) => {
         status: 'pending',
       };
   
-      const bookingResponse = await fetch('http://localhost:5000/api/bookings', {
+      const bookingResponse = await fetch(`${BASE_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ export const BookingProvider = ({ children }) => {
 
       //debugger 
   
-      const paymentResponse = await fetch('http://localhost:5000/api/payments', {
+      const paymentResponse = await fetch(`${BASE_URL}/api/payments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ export const BookingProvider = ({ children }) => {
       // Step 4: Update the booking status to 'confirmed' or 'paid'
       const updateBookingData = { status: 'confirmed' }; // Example status
   
-      const updateBookingResponse = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
+      const updateBookingResponse = await fetch(`${BASE_URL}/api/bookings/${bookingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,12 +127,12 @@ export const BookingProvider = ({ children }) => {
   const cancelBooking = async (bookingId, walkId, fetchBookings) => {
     try {
       // First delete the walk
-      await fetch(`http://localhost:5000/api/walks/${walkId}`, {
+      await fetch(`${BASE_URL}/api/walks/${walkId}`, {
         method: 'DELETE',
       });
 
       // Then delete the booking
-      await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
+      await fetch(`${BASE_URL}/api/bookings/${bookingId}`, {
         method: 'DELETE',
       });
 

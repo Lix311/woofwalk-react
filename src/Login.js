@@ -10,12 +10,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const [error, setError] = useState('');
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth', {
+      const response = await fetch(`${BASE_URL}/api/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

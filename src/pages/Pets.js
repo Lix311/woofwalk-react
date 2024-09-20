@@ -17,13 +17,14 @@ const Pets = () => {
   const { toggleAddPetModal } = useModal();
   const { registerHandlePetAdded, registerHandlePetImageUpdated, registerHandlePetDeleted, registerHandlePetUpdated, deletePet, editPet } = usePet();
   const fileInputRefs = useRef({});
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
   const fetchPets = useCallback(async () => {
     if (!authState || !authState.user || !authState.user.id) return;
 
     try {
       const ownerId = authState.user.id;
-      const response = await fetch(`http://localhost:5000/api/dogs/owner/${ownerId}`);
+      const response = await fetch(`${BASE_URL}/api/dogs/owner/${ownerId}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -86,7 +87,7 @@ const Pets = () => {
     formData.append('image', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/upload', {
+      const response = await fetch(`${BASE_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });

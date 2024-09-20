@@ -11,6 +11,8 @@ const availableTimeSlots = {
   '2024-09-07': ['09:00 AM', '12:00 PM', '04:00 PM'],
 };
 
+const BASE_URL="https://woofwalk-backend.herokuapp.com"
+
 const CalendarWithTimeSlots = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -35,7 +37,7 @@ const CalendarWithTimeSlots = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/walks', {
+      const response = await fetch(`${BASE_URL}/api/walks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

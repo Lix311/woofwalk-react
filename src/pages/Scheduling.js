@@ -12,6 +12,7 @@ const Scheduling = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dogs, setDogs] = useState([]);
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
   const { authState } = useAuth();
   const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking } = useBooking();
@@ -25,7 +26,7 @@ const Scheduling = () => {
 
     try {
       const ownerId = authState.user.id;
-      const response = await fetch(`http://localhost:5000/api/bookings/owner/${ownerId}`);
+      const response = await fetch(`${BASE_URL}/api/bookings/owner/${ownerId}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -48,7 +49,7 @@ const Scheduling = () => {
 
       try {
         const ownerId = authState.user.id;
-        const response = await fetch(`http://localhost:5000/api/dogs/owner/${ownerId}`);
+        const response = await fetch(`${BASE_URL}/api/dogs/owner/${ownerId}`);
         
         if (!response.ok) {
           throw new Error('Network response was not ok');

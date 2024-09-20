@@ -8,6 +8,7 @@ const AddPet = () => {
   const { showAddPetModal, toggleAddPetModal } = useModal();
   const { authState } = useAuth();
   const { handlePetAdded } = usePet();
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
   const [petData, setPetData] = useState({
     name: '',
@@ -72,7 +73,7 @@ const AddPet = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/dogs', {
+      const response = await fetch(`${BASE_URL}/api/dogs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

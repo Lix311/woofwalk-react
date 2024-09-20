@@ -6,6 +6,7 @@ const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const BASE_URL="https://woofwalk-backend.herokuapp.com"
 
   const { authState } = useAuth(); // Access authState from useAuth
 
@@ -15,7 +16,7 @@ const Payments = () => {
     const fetchPayments = async () => {
       try {
         const ownerId = authState.user.id;
-        const response = await fetch(`http://localhost:5000/api/payments/owner/${ownerId}`); // Replace with your API endpoint
+        const response = await fetch(`${BASE_URL}/api/payments/owner/${ownerId}`); // Replace with your API endpoint
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
