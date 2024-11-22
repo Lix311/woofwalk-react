@@ -267,14 +267,20 @@ const Pets = () => {
               </div>
               <div className="form-group mb-3">
                 <label htmlFor="petSize">Size:</label>
-                <input
-                  type="text"
+                <select
                   id="petSize"
                   value={selectedPet.size}
                   onChange={(e) => setSelectedPet({ ...selectedPet, size: e.target.value })}
                   className="form-control"
-                />
+                >
+                  <option value="">Select Size</option>
+                  <option value="Toy">Toy</option>
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                </select>
               </div>
+
               <div className="form-group mb-3">
                 <label htmlFor="petWeight">Weight:</label>
                 <input
@@ -294,15 +300,33 @@ const Pets = () => {
                   className="form-control"
                 />
               </div>
+
               <div className="form-group mb-3">
-                <label htmlFor="petVaccinationStatus">Vaccination Status:</label>
-                <textarea
-                  id="petVaccinations"
-                  value={selectedPet.vaccinations || ''}
-                  onChange={(e) => setSelectedPet({ ...selectedPet, vaccinations: e.target.value })}
-                  className="form-control"
-                />
-              </div>
+            <label htmlFor="petVaccinationStatus">Vaccination Status:</label>
+            <select
+              id="petVaccinationStatus"
+              value={selectedPet.vaccinations || ''}
+              onChange={(e) => setSelectedPet({ ...selectedPet, vaccinations: e.target.value })}
+              className="form-control"
+            >
+              <option value="">Select Status</option>
+              <option value="Up to Date">Up to Date</option>
+              <option value="Not Up to Date">Not Up to Date</option>
+              <option value="Unknown">Unknown</option>
+            </select>
+          </div>
+
+          <div className="form-group mb-3">
+            <label htmlFor="additionalVaccinationNotes">Additional Vaccination Notes:</label>
+            <textarea
+              id="additionalVaccinationNotes"
+              value={selectedPet.additionalVaccinationNotes || ''}
+              onChange={(e) => setSelectedPet({ ...selectedPet, additionalVaccinationNotes: e.target.value })}
+              className="form-control"
+            />
+          </div>
+
+              
               <div className="form-group mb-3">
                 <label htmlFor="petVetContact">Vet Contact Name:</label>
                 <input
@@ -330,25 +354,38 @@ const Pets = () => {
                 />
               </div>
               <div className="form-group mb-3">
-                <label htmlFor="petTemperament">Temperament:</label>
-                <input
-                  type="text"
-                  id="petTemperament"
-                  value={selectedPet.temperament || ''}
-                  onChange={(e) => setSelectedPet({ ...selectedPet, temperament: e.target.value })}
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group mb-3">
-                <label htmlFor="petSocialization">Socialization:</label>
-                <input
-                  type="text"
-                  id="petSocialization"
-                  value={selectedPet.socialization || ''}
-                  onChange={(e) => setSelectedPet({ ...selectedPet, socialization: e.target.value })}
-                  className="form-control"
-                />
-              </div>
+  <label htmlFor="petTemperament">Temperament:</label>
+  <select
+    id="petTemperament"
+    value={selectedPet.temperament || ''}
+    onChange={(e) => setSelectedPet({ ...selectedPet, temperament: e.target.value })}
+    className="form-control"
+  >
+    <option value="">Select Temperament</option>
+    <option value="Friendly">Friendly</option>
+    <option value="Aggressive">Aggressive</option>
+    <option value="Shy">Shy</option>
+    <option value="Curious">Curious</option>
+    <option value="Playful">Playful</option>
+  </select>
+</div>
+
+<div className="form-group mb-3">
+  <label htmlFor="petSocialization">Socialization:</label>
+  <select
+    id="petSocialization"
+    value={selectedPet.socialization || ''}
+    onChange={(e) => setSelectedPet({ ...selectedPet, socialization: e.target.value })}
+    className="form-control"
+  >
+    <option value="">Select Socialization</option>
+    <option value="Good with others">Good with others</option>
+    <option value="Needs training">Needs training</option>
+    <option value="Not social">Not social</option>
+    <option value="Timid">Timid</option>
+  </select>
+</div>
+
               <div className="form-group mb-3">
   <label htmlFor="preferredTimes">Preferred Walk Times:</label>
   <input
@@ -425,7 +462,8 @@ const Pets = () => {
               <p>Size: {selectedPet.size}</p>
               <p>Weight: {selectedPet.weight} lbs</p>
               <p>Medical Conditions: {selectedPet.medicalConditions || 'None'}</p>
-              <p>Vaccinations: {selectedPet.vaccinations || ''}</p>
+              <p>Vaccination Status: {selectedPet.vaccinations || ''}</p>
+              <p>Additional Vaccination Notes: {selectedPet.additionalVaccinationNotes || 'No Notes'}</p>
               <p>Vet Contact:</p>
               {selectedPet.vetContact ? (
                 <ul>

@@ -23,9 +23,12 @@ function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      
-
       if (!response.ok) {
+        // If response status is 403 (unverified email), throw specific error message
+        if (response.status === 403) {
+          throw new Error('Please verify your email before logging in.');
+        }
+        // Default error message for other types of errors
         throw new Error('Invalid email or password');
       }
 
@@ -82,7 +85,7 @@ function Login() {
             Login
           </Button>
 
-          <small className="text-body-secondary">Already Have an Account? </small>
+          {/* <small className="text-body-secondary">Already Have an Account? </small>
           <a className="text-black" href="/home">Sign In Here</a>
 
           <hr className="my-4" />
@@ -97,7 +100,7 @@ function Login() {
           </Button>
           <Button variant="outline-secondary" className="w-100 py-2 mb-2 rounded-3">
             <i className="bi bi-github me-1"></i> Sign up with GitHub
-          </Button>
+          </Button> */}
         </Form>
       </Modal.Body>
     </Modal>

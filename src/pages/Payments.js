@@ -37,6 +37,23 @@ const Payments = () => {
   return (
     <Container className="mt-4">
       <h1 className="mb-4">Payments</h1>
+
+      {/* QR Code Section */}
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h3>Scan QR Code to Pay</h3>
+        <div style={{ display: 'inline-block', padding: '20px', border: '1px solid #ccc', borderRadius: '10px' }}>
+          {/* You can add your QR code here */}
+          <img 
+            src="images/paymentQR.png" // Replace this with your actual QR code image URL
+            alt="QR Code"
+            width="200"
+            height="200"
+            style={{ borderRadius: '10px' }}
+          />
+        </div>
+      </div>
+
+      {/* Payment Table */}
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -52,7 +69,12 @@ const Payments = () => {
               <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
               <td>${payment.amount.toFixed(2)}</td>
               <td>{payment.paymentMethod}</td>
-              <td>{payment.status}</td> {/* Display the payment status */}
+              <td style={{ color: payment.status === 'completed' ? 'green' : (payment.status === 'pending' || payment.status === 'failed' ? 'red' : 'black') }}>
+                {payment.status === 'completed' ? 'PAID' :
+                (payment.status === 'pending' || payment.status === 'failed') ? 'UNPAID' :
+                payment.status === 'PAID' ? 'PAID' :
+                'UNKNOWN'}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -4,7 +4,7 @@ import { useModal } from './context/ModalContext';
 import './Signup.css'; // Optional custom styles
 
 function SignUp() {
-  const { showSignupModal, toggleSignupModal } = useModal();
+  const { toggleLoginModal, showSignupModal, toggleSignupModal } = useModal();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -160,9 +160,13 @@ function SignUp() {
           </Button>
 
           <small className="text-body-secondary">Already have an account? </small>
-          <a className="text-black" href="/login">Log In Here</a>
+          {/* <a className="text-black" href="#" onClick={toggleLoginModal}>Log In Here</a> */}
+          <Button variant="link" onClick={toggleLoginModal}>Log In Here</Button>
 
-          <hr className="my-4" />
+          
+
+
+          {/* <hr className="my-4" />
 
           <h2 className="fs-5 fw-bold mb-3">Or use a third-party</h2>
 
@@ -174,7 +178,7 @@ function SignUp() {
           </Button>
           <Button variant="outline-secondary" className="w-100 py-2 mb-2 rounded-3">
             <i className="bi bi-github me-1"></i> Sign up with GitHub
-          </Button>
+          </Button> */}
         </Form>
       </Modal.Body>
     </Modal>

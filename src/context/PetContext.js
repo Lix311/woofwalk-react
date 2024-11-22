@@ -93,6 +93,7 @@ export const PetProvider = ({ children }) => {
 
   const editPet = useCallback(async (petId, petData, token) => {
     console.log(petId, petData)
+    debugger 
     try {
       const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
         method: 'PUT',

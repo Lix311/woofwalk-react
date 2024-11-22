@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import './Home.css';
@@ -17,6 +17,19 @@ function Home() {
   const location = useLocation();
   const message = location.state?.message;
 
+  // State to control the visibility of the banner
+  const [showBanner, setShowBanner] = useState(!!message);
+
+  useEffect(() => {
+    // Hide the banner after 3 seconds
+    if (message) {
+      const timer = setTimeout(() => {
+        setShowBanner(false);
+      }, 3000); // 3 seconds
+      return () => clearTimeout(timer); // Clear timeout on unmount
+    }
+  }, [message]);
+
   return (
     <>
       {/* Header Container */}
@@ -28,12 +41,10 @@ function Home() {
       </div>
 
       {/* Validation Message */}
-      {message && (
-        <Container>
-          <div className="alert alert-warning text-center mt-3">
-            {message}
-          </div>
-        </Container>
+      {showBanner && message && (
+        <div className="validation-banner">
+          {message}
+        </div>
       )}
 
       {/* Services Section */}

@@ -6,12 +6,26 @@ export const ModalProvider = ({ children }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showAddPetModal, setShowAddPetModal] = useState(false);
-  const [showAddWalkModal, setShowAddWalkModal] = useState(false); // Add state for AddWalk modal
+  const [showAddWalkModal, setShowAddWalkModal] = useState(false);
 
-  const toggleLoginModal = () => setShowLoginModal((prev) => !prev);
-  const toggleSignupModal = () => setShowSignupModal((prev) => !prev);
+  const toggleLoginModal = () => {
+    // Close the signup modal when opening/closing login modal
+    setShowLoginModal((prev) => {
+      if (!prev) setShowSignupModal(false); // Close signup modal when login opens
+      return !prev;
+    });
+  };
+
+  const toggleSignupModal = () => {
+    // Close the login modal when opening/closing signup modal
+    setShowSignupModal((prev) => {
+      if (!prev) setShowLoginModal(false); // Close login modal when signup opens
+      return !prev;
+    });
+  };
+
   const toggleAddPetModal = () => setShowAddPetModal((prev) => !prev);
-  const toggleAddWalkModal = () => setShowAddWalkModal((prev) => !prev); // Add toggle function for AddWalk modal
+  const toggleAddWalkModal = () => setShowAddWalkModal((prev) => !prev);
 
   return (
     <ModalContext.Provider value={{
@@ -21,12 +35,13 @@ export const ModalProvider = ({ children }) => {
       toggleSignupModal,
       showAddPetModal,
       toggleAddPetModal,
-      showAddWalkModal, // Provide the state for AddWalk modal
-      toggleAddWalkModal, // Provide the toggle function for AddWalk modal
+      showAddWalkModal,
+      toggleAddWalkModal,
     }}>
       {children}
     </ModalContext.Provider>
   );
 };
+
 
 export const useModal = () => useContext(ModalContext);
