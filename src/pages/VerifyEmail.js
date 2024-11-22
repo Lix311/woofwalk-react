@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation} from 'react-router-dom';
+import { Container, Card } from 'react-bootstrap';
+
 
 const VerifyEmail = () => {
   const [status, setStatus] = useState('loading'); // loading, success, error
@@ -31,49 +33,37 @@ const VerifyEmail = () => {
   console.log('Error Message:', errorMessage);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        {status === 'loading' && <h3>Verifying your email...</h3>}
-        {status === 'success' && (
-          <div style={styles.success}>
-            <h2>Email Verified!</h2>
-            <p>Your email has been successfully verified.</p>
-          </div>
-        )}
-        {status === 'error' && (
-          <div style={styles.error}>
-            <h2>Error</h2>
-            <p>{errorMessage}</p>
-          </div>
-        )}
-      </div>
-    </div>
+    <Container className="d-flex justify-content-center align-items-center vh-100">
+      <Card
+          className="shadow-lg text-center p-5"
+          style={{
+            maxWidth: '500px',
+            width: '100%',
+            backgroundColor: '#f8f9fa', // light gray card
+            borderRadius: '10px',
+          }}
+        >
+          {status === 'loading' && (
+            <h3 className="fw-bold fs-3">Verifying your email...</h3>
+          )}
+          {status === 'success' && (
+            <div className="text-success">
+              <h2 className="fw-bold mb-3 fs-2">Email Verified!</h2>
+              <p className="fs-5">Your email has been successfully verified.</p>
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="text-danger">
+              <h2 className="fw-bold mb-3 fs-2">Error</h2>
+              <p className="fs-5">{errorMessage}</p>
+            </div>
+          )}
+        </Card>
+    </Container>
   );
 };
 
-// Simple inline styles for the card and container
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    backgroundColor: '#f0f0f0',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: '30px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    width: '300px',
-    textAlign: 'center',
-  },
-  success: {
-    color: 'green',
-  },
-  error: {
-    color: 'red',
-  },
-};
+  
+  
 
 export default VerifyEmail;
