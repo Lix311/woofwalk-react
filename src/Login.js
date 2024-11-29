@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useModal } from './context/ModalContext';
 import { useAuth } from './context/AuthContext';
 import './Login.css'; // Optional custom styles
 
 function Login() {
-  const { showLoginModal, toggleLoginModal } = useModal();
+  const { showLoginModal, toggleLoginModal, setResetCallback } = useModal();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const [error, setError] = useState('');
+
+  // Function to reset form fields and error
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+    setError('');
+  };
+
+  // Register reset function with the ModalContext
+  useEffect(() => {
+    setResetCallback('login', resetForm);
+    return () => setResetCallback('login', null); // Cleanup on unmount
+  }, [setResetCallback]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,24 +37,20 @@ function Login() {
       });
 
       if (!response.ok) {
-        // If response status is 403 (unverified email), throw specific error message
         if (response.status === 403) {
           throw new Error('Please verify your email before logging in.');
         }
-        // Default error message for other types of errors
         throw new Error('Invalid email or password');
       }
 
       const data = await response.json();
       const { token, user } = data;
-      login(token, user); // Pass only the token
+      login(token, user);
 
-      // Handle successful login
-      console.log('Login successful:', token);
-      toggleLoginModal(); // Close the modal
+      // Close the modal and reset form after successful login
+      toggleLoginModal();
+      resetForm();
     } catch (err) {
-      // Handle error
-      console.error('Login failed:', err);
       setError(err.message);
     }
   };
@@ -49,7 +58,10 @@ function Login() {
   return (
     <Modal
       show={showLoginModal}
-      onHide={toggleLoginModal}
+      onHide={() => {
+        toggleLoginModal();
+        resetForm(); // Ensure form is cleared when the modal is closed
+      }}
       aria-labelledby="modalSignin"
     >
       <Modal.Header closeButton>
@@ -84,23 +96,6 @@ function Login() {
           <Button variant="primary" type="submit" className="w-100 mb-2 btn-lg rounded-3">
             Login
           </Button>
-
-          {/* <small className="text-body-secondary">Already Have an Account? </small>
-          <a className="text-black" href="/home">Sign In Here</a>
-
-          <hr className="my-4" />
-
-          <h2 className="fs-5 fw-bold mb-3">Or use a third-party</h2>
-
-          <Button variant="outline-secondary" className="w-100 py-2 mb-2 rounded-3">
-            <i className="bi bi-twitter me-1"></i> Sign up with Twitter
-          </Button>
-          <Button variant="outline-primary" className="w-100 py-2 mb-2 rounded-3">
-            <i className="bi bi-facebook me-1"></i> Sign up with Facebook
-          </Button>
-          <Button variant="outline-secondary" className="w-100 py-2 mb-2 rounded-3">
-            <i className="bi bi-github me-1"></i> Sign up with GitHub
-          </Button> */}
         </Form>
       </Modal.Body>
     </Modal>

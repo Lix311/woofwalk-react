@@ -73,4 +73,17 @@
   .mb-2 {
     margin-bottom: 1rem; /* Margin below elements */
   }
+
+  .text-danger {
+    color: #dc3545; /* Bootstrap's danger color */
+    font-weight: bold;
+    margin-top: 0.5rem;
+  }
+  
+  .text-success {
+    color: #28a745; /* Bootstrap's success color */
+    font-weight: bold;
+    margin-top: 0.5rem;
+  }
+  
   

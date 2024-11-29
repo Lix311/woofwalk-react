@@ -2,25 +2,27 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import '../CalendarWithTimeSlots.css';
+import './Scheduling.css';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingsContext';
 
 const Scheduling = () => {
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState([]); // All bookings
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [availableTimes, setAvailableTimes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allDogs, setAllDogs] = useState([]);
   const [ownerDogs, setOwnerDogs] = useState([]);
+  const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
   const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking } = useBooking();
 
+  // Fetch all bookings
   const fetchAllBookings = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/');
+      const response = await fetch('http://localhost:5000/api/bookings');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -34,6 +36,7 @@ const Scheduling = () => {
     }
   }, []);
 
+  // Fetch all dogs
   const fetchAllDogs = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:5000/api/dogs');
@@ -48,6 +51,7 @@ const Scheduling = () => {
     }
   }, []);
 
+  // Fetch owner-specific dogs
   const fetchOwnerDogs = useCallback(async () => {
     if (authState.user) {
       try {
@@ -76,44 +80,87 @@ const Scheduling = () => {
       const startHour = 8;
       const endHour = 18;
       for (let hour = startHour; hour < endHour; hour++) {
-        slots.push(new Date(selectedDate.setHours(hour, 0, 0, 0)));
+        // Create new date object to avoid modifying selectedDate directly
+        const slotDate = new Date(selectedDate);
+        slotDate.setHours(hour, 0, 0, 0);
+        slots.push(slotDate);
       }
       return slots;
     };
-
+  
     const slots = generateTimeSlots();
-
+    const currentTime = new Date();
+  
+    // Helper function to check if the slot is in the past or today
+    const isPastOrToday = (slot) => {
+      const slotDate = new Date(slot);
+      return slotDate.toDateString() === currentTime.toDateString() || slot < currentTime;
+    };
+  
+    // Filter slots to exclude past or today’s times
     const filteredSlots = slots.filter((slot) => {
-      const isPastTime = slot < new Date();
+      const isPastTime = isPastOrToday(slot);
+      const isMaxSlotsReached = bookings.filter((booking) =>
+        new Date(booking.walkId.startTime).toDateString() === selectedDate.toDateString()
+      ).length >= maxSlotsPerDay;
+  
+      return !isPastTime && !isMaxSlotsReached;
+    });
+  
+    // Limit slots after current time (to avoid showing future slots beyond 12pm)
+    const availableSlots = filteredSlots.filter((slot) => {
+      // Only show available times for the remaining slots if max slots are not yet reached
       return (
-        !isPastTime &&
-        !bookings.some(
+        bookings.filter(
           (booking) =>
             new Date(booking.walkId.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
               slot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) &&
             new Date(booking.walkId.startTime).toDateString() === selectedDate.toDateString()
-        )
+        ).length === 0 &&
+        filteredSlots.length <= maxSlotsPerDay
       );
     });
-
-    setAvailableTimes(filteredSlots);
+  
+    setAvailableTimes(availableSlots);
   }, [selectedDate, bookings]);
+  
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      const dateStr = date.toDateString();
+
+      // Check all bookings, not just the user's
+      const allBookings = bookings.filter(
+        (booking) => new Date(booking.walkId.startTime).toDateString() === dateStr
+      );
+
+      // Check if fully booked
+      if (allBookings.length >= maxSlotsPerDay) {
+        return 'react-calendar__tile--fully-booked'; // Fully booked class
+      }
+
+      // Check if the user has bookings on this date
+      const userBookings = allBookings.filter(
+        (booking) => booking.ownerId._id === authState.user.id
+      );
+
+      if (userBookings.length > 0) {
+        return 'react-calendar__tile--user-booked'; // User booked class
+      }
+    }
+    return null;
   };
 
   if (!authState.user) return <p>Please log in to view the scheduling page.</p>;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const bookedDates = bookings.map((booking) =>
-    new Date(booking.walkId.startTime).toDateString()
-  );
-
-  const filteredBookings = bookings.filter(
-    (booking) => new Date(booking.walkId.startTime).toDateString() === selectedDate.toDateString()
-  );
+  // Filter bookings based on user ID
+  const userBookings = bookings.filter(booking => booking.ownerId._id === authState.user.id);
 
   return (
     <Container className="mt-4">
@@ -126,9 +173,7 @@ const Scheduling = () => {
               <Calendar
                 onChange={handleDateChange}
                 value={selectedDate}
-                tileClassName={({ date }) =>
-                  bookedDates.includes(date.toDateString()) ? 'booked-date' : null
-                }
+                tileClassName={tileClassName}
               />
             </Card.Body>
           </Card>
@@ -175,41 +220,35 @@ const Scheduling = () => {
         <Col md={4}>
           <Card>
             <Card.Body>
-              <Card.Title>All Bookings for {selectedDate.toDateString()}</Card.Title>
+              <Card.Title>Your Bookings for This Month</Card.Title>
               <ListGroup>
-                {filteredBookings.map((booking) => {
-                  const isPastBooking = new Date(booking.walkId.startTime) < new Date();
-                  return (
-                    <ListGroup.Item key={booking._id} className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <strong>Dog:</strong> {booking.dogId.name} <br />
-                        <strong>Owner:</strong> {booking.ownerId.firstName} {booking.ownerId.lastName} <br />
-                        <strong>Time:</strong>{' '}
-                        {new Date(booking.walkId.startTime).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}{' '}
-                        <br />
-                        <strong>Date:</strong>{' '}
-                        {new Date(booking.walkId.startTime).toLocaleDateString()}
-                      </div>
+                {userBookings
+                  .filter((booking) => {
+                    const bookingDate = new Date(booking.walkId.startTime);
+                    const currentMonth = new Date().getMonth();
+                    const currentYear = new Date().getFullYear();
+                    return bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
+                  })
+                  .map((booking) => {
+                    const isPastBooking = new Date(booking.walkId.startTime) < new Date();
 
-                      {authState.user &&
-                        booking.ownerId &&
-                        booking.ownerId._id &&
-                        authState.user.id.toString() === booking.ownerId._id.toString() && (
+                    return (
+                      <ListGroup.Item key={booking._id} className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>Dog:</strong> {booking.dogId.name} <br />
+                          <strong>Date:</strong> {new Date(booking.walkId.startTime).toLocaleString()}
+                        </div>
+                        {!isPastBooking && (
                           <Button
                             variant="danger"
                             onClick={() => cancelBooking(booking._id, booking.walkId._id, fetchAllBookings)}
-                            disabled={isPastBooking}
-                            title={isPastBooking ? 'Cannot cancel past walks' : ''}
                           >
-                            Cancel Walk
+                            Cancel Booking
                           </Button>
                         )}
-                    </ListGroup.Item>
-                  );
-                })}
+                      </ListGroup.Item>
+                    );
+                  })}
               </ListGroup>
             </Card.Body>
           </Card>

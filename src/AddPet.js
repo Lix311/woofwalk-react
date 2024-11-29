@@ -140,12 +140,19 @@ const AddPet = () => {
           <Form.Group controlId="formPetSize">
             <Form.Label>Size</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               name="size"
               value={petData.size}
               onChange={handleInputChange}
-            />
+            >
+              <option value="">Select Size</option>
+              <option value="Toy">Toy</option>
+              <option value="Small">Small</option>
+              <option value="Medium">Medium</option>
+              <option value="Large">Large</option>
+            </Form.Control>
           </Form.Group>
+
           <Form.Group controlId="formPetWeight">
             <Form.Label>Weight</Form.Label>
             <Form.Control
@@ -173,15 +180,23 @@ const AddPet = () => {
               onChange={handleInputChange}
             />
           </Form.Group>
+
           <Form.Group controlId="formVaccinations">
             <Form.Label>Vaccinations</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               name="vaccinations"
               value={petData.vaccinations}
               onChange={handleInputChange}
-            />
+              >
+            
+              <option value="">Select Status</option>
+              <option value="Up to Date">Up to Date</option>
+              <option value="Not Up to Date">Not Up to Date</option>
+              <option value="Unknown">Unknown</option>
+            </Form.Control>
           </Form.Group>
+
           <Form.Group controlId="formVetName">
             <Form.Label>Vet Name</Form.Label>
             <Form.Control
@@ -209,24 +224,40 @@ const AddPet = () => {
               onChange={handleVetContactChange}
             />
           </Form.Group>
+
           <Form.Group controlId="formTemperament">
             <Form.Label>Temperament</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               name="temperament"
               value={petData.temperament}
               onChange={handleInputChange}
-            />
+            >
+              <option value="">Select Temperament</option>
+              <option value="Friendly">Friendly</option>
+              <option value="Aggressive">Aggressive</option>
+              <option value="Shy">Shy</option>
+              <option value="Curious">Curious</option>
+              <option value="Playful">Playful</option>
+            </Form.Control>
           </Form.Group>
+
           <Form.Group controlId="formSocialization">
             <Form.Label>Socialization</Form.Label>
             <Form.Control
-              type="text"
+              as="select"
               name="socialization"
               value={petData.socialization}
               onChange={handleInputChange}
-            />
+            >
+              <option value="">Select Socialization</option>
+              <option value="Good with others">Good with others</option>
+              <option value="Needs training">Needs training</option>
+              <option value="Not social">Not social</option>
+              <option value="Timid">Timid</option>
+            </Form.Control>
           </Form.Group>
+          
           <Form.Group controlId="formWalkPreferencesTimes">
             <Form.Label>Preferred Walk Times</Form.Label>
             <Form.Control
