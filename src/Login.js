@@ -10,12 +10,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const [error, setError] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
 
   // Function to reset form fields and error
   const resetForm = () => {
     setEmail('');
     setPassword('');
     setError('');
+    setResetMessage('');
   };
 
   // Register reset function with the ModalContext
@@ -52,6 +54,26 @@ function Login() {
       resetForm();
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/users/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error sending password reset email. Please try again.');
+      }
+
+      setResetMessage('Password reset email sent! Check your inbox.');
+    } catch (err) {
+      setResetMessage(err.message);
     }
   };
 
@@ -96,6 +118,20 @@ function Login() {
           <Button variant="primary" type="submit" className="w-100 mb-2 btn-lg rounded-3">
             Login
           </Button>
+
+          {/* Forgot Password Link */}
+          <div className="text-center">
+            <Button
+              variant="link"
+              className="p-0 text-decoration-underline"
+              onClick={handlePasswordReset}
+              disabled={!email} // Disable if email is not entered
+            >
+              Forgot your password?
+            </Button>
+          </div>
+
+          {resetMessage && <p className="text-success mt-2">{resetMessage}</p>} {/* Display reset success */}
         </Form>
       </Modal.Body>
     </Modal>

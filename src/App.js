@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './Layout'; // Import Layout
 import AddPet from './AddPet'; // Import AddPet
 import VerifyEmail from './pages/VerifyEmail';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/schedule" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
       <Login /> {/* Include the Login modal */}
       <SignUp /> {/* Include the SignUp modal */}
