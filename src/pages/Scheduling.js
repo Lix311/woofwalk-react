@@ -6,6 +6,8 @@ import './Scheduling.css';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingsContext';
 
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 const Scheduling = () => {
   const [bookings, setBookings] = useState([]); // All bookings
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -22,7 +24,7 @@ const Scheduling = () => {
   // Fetch all bookings
   const fetchAllBookings = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/bookings');
+      const response = await fetch(`${BASE_URL}/api/bookings`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -39,7 +41,7 @@ const Scheduling = () => {
   // Fetch all dogs
   const fetchAllDogs = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/dogs');
+      const response = await fetch(`${BASE_URL}/api/dogs`);
       if (!response.ok) {
         throw new Error('Failed to fetch dogs');
       }
@@ -55,7 +57,7 @@ const Scheduling = () => {
   const fetchOwnerDogs = useCallback(async () => {
     if (authState.user) {
       try {
-        const response = await fetch(`http://localhost:5000/api/dogs/owner/${authState.user.id}`);
+        const response = await fetch(`${BASE_URL}/api/dogs/owner/${authState.user.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch owner dogs');
         }

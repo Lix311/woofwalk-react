@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext'; // Adjust the import path as necessary
 
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const { authState } = useAuth(); // Access authState from useAuth
+  
+
 
   useEffect(() => {
     if (!authState?.user?.id) return; // Exit if user ID is not available
@@ -15,7 +19,7 @@ const Payments = () => {
     const fetchPayments = async () => {
       try {
         const ownerId = authState.user.id;
-        const response = await fetch(`http://localhost:5000/api/payments/owner/${ownerId}`); // Replace with your API endpoint
+        const response = await fetch(`${BASE_URL}/api/payments/owner/${ownerId}`); // Replace with your API endpoint
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

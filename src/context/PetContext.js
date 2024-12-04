@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 
 const PetContext = createContext();
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 
 export const PetProvider = ({ children }) => {
   const [handlePetAdded, setHandlePetAdded] = useState(null);
@@ -27,7 +29,7 @@ export const PetProvider = ({ children }) => {
   const deletePet = useCallback(async (petId, token) => {
     try {
       // Step 1: Fetch and delete bookings associated with the pet
-      const bookingsResponse = await fetch(`http://localhost:5000/api/bookings?dogId=${petId}`, {
+      const bookingsResponse = await fetch(`${BASE_URL}/api/bookings?dogId=${petId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +51,7 @@ export const PetProvider = ({ children }) => {
   
       // Step 2: Delete associated walks
       for (const walkId of walkIds) {
-        await fetch(`http://localhost:5000/api/walks/${walkId}`, {
+        await fetch(`${BASE_URL}/api/walks/${walkId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +62,7 @@ export const PetProvider = ({ children }) => {
   
       // Step 3: Delete associated bookings
       for (const booking of bookings) {
-        await fetch(`http://localhost:5000/api/bookings/${booking._id}`, {
+        await fetch(`${BASE_URL}/api/bookings/${booking._id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -70,7 +72,7 @@ export const PetProvider = ({ children }) => {
       }
   
       // Step 4: Delete the pet
-      const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
+      const response = await fetch(`${BASE_URL}/api/dogs/${petId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +97,7 @@ export const PetProvider = ({ children }) => {
     console.log(petId, petData)
     debugger 
     try {
-      const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
+      const response = await fetch(`${BASE_URL}/api/dogs/${petId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +122,7 @@ export const PetProvider = ({ children }) => {
 
   const updatePetImage = useCallback(async (petId, imageUrl, token) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/dogs/${petId}`, {
+      const response = await fetch(`${BASE_URL}/api/dogs/${petId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

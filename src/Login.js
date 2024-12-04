@@ -4,6 +4,8 @@ import { useModal } from './context/ModalContext';
 import { useAuth } from './context/AuthContext';
 import './Login.css'; // Optional custom styles
 
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 function Login() {
   const { showLoginModal, toggleLoginModal, setResetCallback } = useModal();
   const [email, setEmail] = useState('');
@@ -30,7 +32,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth', {
+      const response = await fetch(`${BASE_URL}/api/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +61,7 @@ function Login() {
 
   const handlePasswordReset = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users/forgot-password', {
+      const response = await fetch(`${BASE_URL}/api/users/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

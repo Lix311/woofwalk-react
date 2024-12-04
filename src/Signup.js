@@ -3,6 +3,8 @@ import { Modal, Button, Form, Toast, ToastContainer } from 'react-bootstrap';
 import { useModal } from './context/ModalContext';
 import './Signup.css';
 
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 function SignUp() {
   const { toggleLoginModal, showSignupModal, toggleSignupModal } = useModal();
   const [firstName, setFirstName] = useState('');
@@ -39,7 +41,7 @@ function SignUp() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${BASE_URL}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,6 +3,8 @@ import { Container, Form, Button, Alert } from 'react-bootstrap'; // Using React
 import { useModal } from '../context/ModalContext'; // Access modal functions
 import './ResetPassword.css'; // Add page-specific styles
 
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+
 function ResetPassword() {
   const { toggleLoginModal } = useModal(); // Access login modal function
   const [password, setPassword] = useState('');
@@ -22,7 +24,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/reset-password', {
+      const response = await fetch(`${BASE_URL}/api/users/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

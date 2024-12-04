@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
+const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -33,7 +34,7 @@ export function AuthProvider({ children }) {
 
   const updateUserInfo = async (updatedInfo) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${authState.user.id}`, {
+      const response = await fetch(`${BASE_URL}/api/users/${authState.user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
