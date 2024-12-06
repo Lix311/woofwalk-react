@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import { Toast, ToastContainer } from 'react-bootstrap';
 import './Home.css';
 import dogWalkingIcon from './assets/images/dog-walking-icon.png';
 import dogTrainingIcon from './assets/images/dog-training-icon.png';
@@ -8,27 +9,26 @@ import dogHeartIcon from './assets/images/heart-icon.png';
 import dogHomeIcon from './assets/images/home-icon.png';
 import petStoreIcon from './assets/images/pet-store-icon.png';
 import suvIcon from './assets/images/suv-icon.png';
-import dog1 from './assets/images/dog1.jpg'
-import dog2 from './assets/images/dog2.jpg'
-import dog3 from './assets/images/dog3.jpg'
-
+import dog1 from './assets/images/dog1.jpg';
+import dog2 from './assets/images/dog2.jpg';
+import dog3 from './assets/images/dog3.jpg';
 
 function Home() {
   const location = useLocation();
-  const message = location.state?.message;
 
-  // State to control the visibility of the banner
-  const [showBanner, setShowBanner] = useState(!!message);
+  // State for toast and validation message
+  const [toastState, setToastState] = useState(location.state?.toast || { show: false });
+  const [showBanner, setShowBanner] = useState(!!location.state?.message);
 
   useEffect(() => {
-    // Hide the banner after 3 seconds
-    if (message) {
-      const timer = setTimeout(() => {
-        setShowBanner(false);
-      }, 3000); // 3 seconds
-      return () => clearTimeout(timer); // Clear timeout on unmount
+    // Automatically hide validation banner after 3 seconds
+    if (showBanner) {
+      const timer = setTimeout(() => setShowBanner(false), 3000);
+      return () => clearTimeout(timer); // Clear timer on component unmount
     }
-  }, [message]);
+  }, [showBanner]);
+
+  const handleToastClose = () => setToastState({ ...toastState, show: false });
 
   return (
     <>
@@ -41,10 +41,28 @@ function Home() {
       </div>
 
       {/* Validation Message */}
-      {showBanner && message && (
-        <div className="validation-banner">
-          {message}
-        </div>
+      {showBanner && location.state?.message && (
+        <div className="validation-banner">{location.state.message}</div>
+      )}
+
+      {/* Toast Notification */}
+      {toastState.show && (
+        <ToastContainer position="top-center" className="p-3">
+          <Toast
+            bg={toastState.variant}
+            onClose={handleToastClose}
+            show={toastState.show}
+            delay={3000}
+            autohide
+          >
+            <Toast.Header>
+              <strong className="me-auto">
+                {toastState.variant === 'success' ? 'Success' : 'Error'}
+              </strong>
+            </Toast.Header>
+            <Toast.Body>{toastState.message}</Toast.Body>
+          </Toast>
+        </ToastContainer>
       )}
 
       {/* Services Section */}
@@ -90,7 +108,7 @@ function Home() {
             <Image src={dogHeartIcon} alt="Specialized Services" width={50} height={50} className="me-3" />
             <div>
               <h3 className="fw-bold fs-4">Specialized Services</h3>
-              <p className="text-black">Specialized care for puppies and older dogs including socialization, basic training, gentler exercise and frequent bathroom breaks.</p>
+              <p className="text-black">Specialized care for puppies and older dogs including socialization, basic training, gentler exercise, and frequent bathroom breaks.</p>
             </div>
           </Col>
         </Row>
@@ -100,23 +118,17 @@ function Home() {
       <Container className="px-4" id="featured-3">
         <Row className="g-5 py-5 row-cols-1 row-cols-lg-3">
           <Col className="feature col text-center">
-            <div className="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
-              <Image className="responsive-icon" src={dog1} alt="dog" fluid />
-            </div>
+            <Image className="responsive-icon" src={dog1} alt="dog" fluid />
             <h3 className="fs-2 text-body-emphasis mb-5">Happy and Healthy</h3>
             <p className="feature-text">Our walks keep your dog happy and healthy, blending fun and fitness into every outing.</p>
           </Col>
           <Col className="feature col text-center">
-            <div className="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
-              <Image className="responsive-icon" src={dog2} alt="dog" fluid />
-            </div>
+            <Image className="responsive-icon" src={dog2} alt="dog" fluid />
             <h3 className="fs-2 text-body-emphasis mb-5">One on One Attention</h3>
             <p className="feature-text">Enjoy personalized care with one-on-one walks tailored to your dog’s needs and preferences.</p>
           </Col>
           <Col className="feature col text-center">
-            <div className="feature-icon d-inline-flex align-items-center justify-content-center bg-gradient fs-2 mb-3">
-              <Image className="responsive-icon" src={dog3} alt="dog" fluid />
-            </div>
+            <Image className="responsive-icon" src={dog3} alt="dog" fluid />
             <h3 className="fs-2 text-body-emphasis mb-5">All Breeds Welcome</h3>
             <p className="feature-text">We cater to all breeds and sizes, ensuring every dog receives the care they deserve.</p>
           </Col>

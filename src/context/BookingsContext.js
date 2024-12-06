@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 
 const BookingContext = createContext();
-const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+const BASE_URL="http://localhost:5000"
 
 // Step 1: Example Walk
 // const walkResponse = await fetch(`${BASE_URL}/api/walks`, {

@@ -4,7 +4,7 @@ import { useModal } from './context/ModalContext';
 import { useAuth } from './context/AuthContext';
 import './Login.css'; // Optional custom styles
 
-const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+const BASE_URL="http://localhost:5000"
 
 function Login() {
   const { showLoginModal, toggleLoginModal, setResetCallback } = useModal();

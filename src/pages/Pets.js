@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePet } from '../context/PetContext';
 import { useModal } from '../context/ModalContext';
 import "./Pets.css";
-const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+const BASE_URL="http://localhost:5000"
 
 const Pets = () => {
   const [pets, setPets] = useState([]);

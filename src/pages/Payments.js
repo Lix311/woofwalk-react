@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext'; // Adjust the import path as necessary
 
-const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+const BASE_URL="http://localhost:5000"
 
 const Payments = () => {
   const [payments, setPayments] = useState([]);

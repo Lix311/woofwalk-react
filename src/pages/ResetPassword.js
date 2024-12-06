@@ -3,7 +3,7 @@ import { Container, Form, Button, Alert } from 'react-bootstrap'; // Using React
 import { useModal } from '../context/ModalContext'; // Access modal functions
 import './ResetPassword.css'; // Add page-specific styles
 
-const BASE_URL="https://woofwalk-backend-a64f983b3231.herokuapp.com"
+const BASE_URL="http://localhost:5000"
 
 function ResetPassword() {
   const { toggleLoginModal } = useModal(); // Access login modal function
