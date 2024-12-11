@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext } from 'react';
 
 const BookingContext = createContext();
+
+
 const BASE_URL="http://localhost:5000"
 
 // Step 1: Example Walk
@@ -15,6 +17,8 @@ const BASE_URL="http://localhost:5000"
 
 export const BookingProvider = ({ children }) => {
   const [selectedDog, setSelectedDog] = useState(null);
+  const [loadingSlots, setLoadingSlots] = useState({}); // Track loading state for each slot
+
 
   const handleBookWalk = async (timeSlot, authState, fetchBookings) => {
     if (!selectedDog) {
@@ -35,6 +39,12 @@ export const BookingProvider = ({ children }) => {
         lng: -74.0060  // Replace with the actual longitude
       }
     };
+
+    // Set loading state for this specific slot
+  setLoadingSlots((prev) => ({
+    ...prev,
+    [timeSlot.toISOString()]: true
+  }));
   
     try {
       // Step 1: Create the walk
@@ -130,6 +140,13 @@ export const BookingProvider = ({ children }) => {
     } catch (err) {
       console.error('Error creating booking and payment:', err);
       alert('Failed to book walk and process payment');
+    } finally {
+
+      setLoadingSlots((prev) => ({
+        ...prev,
+        [timeSlot.toISOString()]: false
+      }));
+
     }
   };
   
@@ -155,7 +172,7 @@ export const BookingProvider = ({ children }) => {
   };
 
   return (
-    <BookingContext.Provider value={{ selectedDog, setSelectedDog, handleBookWalk, cancelBooking }}>
+    <BookingContext.Provider value={{ selectedDog, setSelectedDog, handleBookWalk, cancelBooking, loadingSlots }}>
       {children}
     </BookingContext.Provider>
   );

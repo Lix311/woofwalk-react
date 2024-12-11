@@ -54,3 +54,34 @@
   margin-bottom: 15px;
   text-align: center;
 }
+
+/* Scheduling.css */
+
+/* Style for the Meet and Greet section */
+.meet-greet-container {
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.meet-greet-container h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.meet-greet-container button {
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.meet-greet-container button:hover {
+  background-color: #0056b3;
+}
+

@@ -6,7 +6,7 @@ import './Scheduling.css';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingsContext';
 
-const BASE_URL="http://localhost:5000"
+const BASE_URL = "http://localhost:5000";
 
 const Scheduling = () => {
   const [bookings, setBookings] = useState([]); // All bookings
@@ -16,10 +16,12 @@ const Scheduling = () => {
   const [error, setError] = useState(null);
   const [allDogs, setAllDogs] = useState([]);
   const [ownerDogs, setOwnerDogs] = useState([]);
+
+  const [meetGreetScheduled, setMeetGreetScheduled] = useState(false);
   const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
-  const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking } = useBooking();
+  const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking, loadingSlots } = useBooking();
 
   // Fetch all bookings
   const fetchAllBookings = useCallback(async () => {
@@ -125,33 +127,52 @@ const Scheduling = () => {
   
     setAvailableTimes(availableSlots);
   }, [selectedDate, bookings]);
-  
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleScheduleMeetAndGreet = async () => {
+    try {
+      // Destructure user info
+      const { id, email, firstName } = authState.user;
+      
+      // Send request to backend to schedule meet and greet
+      const response = await fetch(`${BASE_URL}/api/users/schedule-meet-greet`, {
+        method: 'POST',
+        body: JSON.stringify({ userId: id, userEmail: email, ownerName: firstName }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+  
+      if (response.ok) {
+        setMeetGreetScheduled(true);
+      } else {
+        setMeetGreetScheduled(false);
+      }
+    } catch (err) {
+      console.error('Error scheduling meet and greet:', err);
+      setMeetGreetScheduled(false);
+    }
   };
 
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
       const dateStr = date.toDateString();
 
-      // Check all bookings, not just the user's
       const allBookings = bookings.filter(
         (booking) => new Date(booking.walkId.startTime).toDateString() === dateStr
       );
 
-      // Check if fully booked
       if (allBookings.length >= maxSlotsPerDay) {
-        return 'react-calendar__tile--fully-booked'; // Fully booked class
+        return 'react-calendar__tile--fully-booked';
       }
 
-      // Check if the user has bookings on this date
       const userBookings = allBookings.filter(
         (booking) => booking.ownerId._id === authState.user.id
       );
 
       if (userBookings.length > 0) {
-        return 'react-calendar__tile--user-booked'; // User booked class
+        return 'react-calendar__tile--user-booked';
       }
     }
     return null;
@@ -160,6 +181,26 @@ const Scheduling = () => {
   if (!authState.user) return <p>Please log in to view the scheduling page.</p>;
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
+
+  if (!authState.user.isMeetGreetVerified) {
+    return (
+      <Container className="mt-4">
+        <div className="meet-greet-container">
+          <h1>Schedule a Meet and Greet</h1>
+          <Button variant="primary" onClick={handleScheduleMeetAndGreet}>
+            Schedule Meet and Greet
+          </Button>
+          {meetGreetScheduled && (
+            <p className="mt-3 text-success">
+              Thank you! Owner Alex will contact you soon to schedule the meet and greet.
+            </p>
+          )}
+
+        </div>
+      </Container>
+    );
+  }
+  
 
   // Filter bookings based on user ID
   const userBookings = bookings.filter(booking => booking.ownerId._id === authState.user.id);
@@ -196,20 +237,28 @@ const Scheduling = () => {
                   ))}
                 </Form.Control>
               </Form.Group>
-
               <Card.Title className="mt-4">Available Times for {selectedDate.toDateString()}</Card.Title>
               {availableTimes.length > 0 ? (
                 <ListGroup>
                   {availableTimes.map((timeSlot, index) => (
                     <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                      {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      <Button
-                        variant="primary"
-                        onClick={() => handleBookWalk(timeSlot, authState, fetchAllBookings)}
-                      >
-                        Book Walk
-                      </Button>
-                    </ListGroup.Item>
+                    {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <Button
+                      variant="primary"
+                      onClick={() => handleBookWalk(timeSlot, authState, fetchAllBookings)}
+                      disabled={loadingSlots[timeSlot.toISOString()]} // Disable the button for the specific slot if loading
+                    >
+                      {loadingSlots[timeSlot.toISOString()] ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Booking...
+                        </>
+                      ) : (
+                        "Book Walk"
+                      )}
+                    </Button>
+                  </ListGroup.Item>
+                  
                   ))}
                 </ListGroup>
               ) : (
@@ -221,7 +270,7 @@ const Scheduling = () => {
 
         <Col md={4}>
           <Card>
-            <Card.Body>
+          <Card.Body>
               <Card.Title>Your Bookings for This Month</Card.Title>
               <ListGroup>
                 {userBookings
