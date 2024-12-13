@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Row, Col, ListGroup, Card, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, ListGroup, Card, Button, Form, Modal } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './Scheduling.css';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingsContext';
+import { useModal } from '../context/ModalContext';
 
 const BASE_URL = "http://localhost:5000";
 
 const Scheduling = () => {
   const [bookings, setBookings] = useState([]); // All bookings
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null); // Selected time slot for the modal
+
+
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [unavailableTimeSlots, setUnavailableTimeSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allDogs, setAllDogs] = useState([]);
@@ -21,7 +26,61 @@ const Scheduling = () => {
   const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
-  const { selectedDog, setSelectedDog, handleBookWalk, cancelBooking, loadingSlots } = useBooking();
+  const { selectedDog, setSelectedDog, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots } = useBooking();
+  const { showBookWeekModal, setShowBookWeekModal } = useModal();
+
+
+
+  const handleOpenBookWeekModal = (timeSlot) => {
+    setSelectedTimeSlot(timeSlot);
+  
+    // Check for unavailable times during the week
+    const { startOfWeek, endOfWeek } = getStartAndEndOfWeek(selectedDate);
+    const unavailable = bookings.filter((booking) => {
+      const bookingDate = new Date(booking.walkId.startTime);
+      return (
+        bookingDate >= new Date(startOfWeek) &&
+        bookingDate <= new Date(endOfWeek) &&
+        new Date(booking.walkId.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
+          timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      );
+    });
+  
+    // Set unavailable time slots with both date and time
+    setUnavailableTimeSlots(unavailable.map((booking) => {
+      const unavailableTime = new Date(booking.walkId.startTime);
+      return {
+        date: unavailableTime.toDateString(),
+        time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    }));
+  
+    setShowBookWeekModal(true);
+  };
+
+  const handleCloseBookWeekModal = () => {
+    setSelectedTimeSlot(null);
+    setShowBookWeekModal(false);
+  };
+
+  function getStartAndEndOfWeek(date) {
+    const startOfWeek = new Date(date);
+    const endOfWeek = new Date(date);
+  
+    // Adjusting the start of the week to Monday (assuming Sunday is the start of the week)
+    const dayOfWeek = startOfWeek.getDay();
+    const diffToMonday = (dayOfWeek + 6) % 7;  // If today is Sunday (0), this will set it to 6 (last week)
+    startOfWeek.setDate(startOfWeek.getDate() - diffToMonday);
+    
+    // Setting the end of the week (Sunday)
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+  
+    // Formatting both dates to strings
+    return {
+      startOfWeek: startOfWeek.toDateString(),
+      endOfWeek: endOfWeek.toDateString(),
+    };
+  }
 
   // Fetch all bookings
   const fetchAllBookings = useCallback(async () => {
@@ -166,11 +225,11 @@ const Scheduling = () => {
       if (allBookings.length >= maxSlotsPerDay) {
         return 'react-calendar__tile--fully-booked';
       }
-
+      
       const userBookings = allBookings.filter(
         (booking) => booking.ownerId._id === authState.user.id
       );
-
+    
       if (userBookings.length > 0) {
         return 'react-calendar__tile--user-booked';
       }
@@ -240,9 +299,34 @@ const Scheduling = () => {
               <Card.Title className="mt-4">Available Times for {selectedDate.toDateString()}</Card.Title>
               {availableTimes.length > 0 ? (
                 <ListGroup>
-                  {availableTimes.map((timeSlot, index) => (
-                    <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                {availableTimes.map((timeSlot, index) => (
+                  <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
                     {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    
+                    {/* Book Week Button */}
+                    <Button 
+                      onClick={() => handleOpenBookWeekModal(timeSlot)} variant="warning"
+                      style={{ marginRight: '10px', backgroundColor: 'orange'}}
+                      disabled={loadingWeekSlots[timeSlot.toISOString()]} // Only disable for the specific week slot
+                    >
+                      {loadingWeekSlots[timeSlot.toISOString()] ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Booking...
+                        </>
+                      ) : (
+                        "Book Week"
+                      )}
+                    </Button>
+              
+                    {/* Book Month Button */}
+                    <Button 
+                      style={{ marginRight: '10px', backgroundColor: 'red'}}
+                    >
+                      Book Month
+                    </Button>
+              
+                    {/* Book Walk Button */}
                     <Button
                       variant="primary"
                       onClick={() => handleBookWalk(timeSlot, authState, fetchAllBookings)}
@@ -258,9 +342,10 @@ const Scheduling = () => {
                       )}
                     </Button>
                   </ListGroup.Item>
-                  
-                  ))}
-                </ListGroup>
+                ))}
+              </ListGroup>
+              
+              
               ) : (
                 <p>No available times for the selected date.</p>
               )}
@@ -294,7 +379,7 @@ const Scheduling = () => {
                             variant="danger"
                             onClick={() => cancelBooking(booking._id, booking.walkId._id, fetchAllBookings)}
                           >
-                            Cancel Booking
+                            Cancel
                           </Button>
                         )}
                       </ListGroup.Item>
@@ -305,6 +390,50 @@ const Scheduling = () => {
           </Card>
         </Col>
       </Row>
+
+      {/* BookWeek Modal */}
+      <Modal show={showBookWeekModal} onHide={handleCloseBookWeekModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Weekly Booking</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedTimeSlot && (
+            <>
+              <p>
+                This week runs from <strong>{getStartAndEndOfWeek(selectedTimeSlot).startOfWeek}</strong> to <strong>{getStartAndEndOfWeek(selectedTimeSlot).endOfWeek}</strong>.
+              </p>
+              <p>Below dates are unavailable. Continue booking?</p>
+
+              {unavailableTimeSlots.length > 0 ? (
+                <ListGroup>
+                  {unavailableTimeSlots.map((slot, index) => (
+                    <ListGroup.Item key={index}>
+                      {slot.date} - {slot.time}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              ) : (
+                <p>No unavailable time slots for this week.</p>
+              )}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseBookWeekModal}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleBookWeek(selectedTimeSlot, authState, fetchAllBookings, unavailableTimeSlots);
+              handleCloseBookWeekModal();
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </Container>
   );
 };

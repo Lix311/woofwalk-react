@@ -7,6 +7,8 @@ export const ModalProvider = ({ children }) => {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [showAddPetModal, setShowAddPetModal] = useState(false);
   const [showAddWalkModal, setShowAddWalkModal] = useState(false);
+  const [showBookWeekModal, setShowBookWeekModal] = useState(false);
+
 
   // Add reset callbacks
   const resetCallbacks = {
@@ -59,6 +61,9 @@ export const ModalProvider = ({ children }) => {
         toggleAddPetModal,
         showAddWalkModal,
         toggleAddWalkModal,
+        showBookWeekModal,
+        setShowBookWeekModal,
+        
         setResetCallback, // Expose the callback setter
       }}
     >
