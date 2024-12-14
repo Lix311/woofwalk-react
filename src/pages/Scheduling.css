@@ -85,3 +85,46 @@
   background-color: #0056b3;
 }
 
+/* Specific Styles for Book Week */
+.book-week-button {
+  background-color: orange !important;
+  border-color: orange !important;
+}
+
+.book-week-button:hover {
+  background-color: darkorange !important; /* Change to a darker shade on hover */
+  border-color: darkorange !important;
+}
+
+/* Specific Styles for Book Month */
+.book-month-button {
+  background-color: red !important;
+  border-color: red !important;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.book-month-button:hover {
+  background-color: darkred !important; /* Change to a darker shade on hover */
+  border-color: darkred !important;
+}
+
+/* Specific Styles for Book Walk */
+.book-walk-button {
+  background-color: blue !important;
+  border-color: blue !important;
+}
+
+.book-walk-button:hover {
+  background-color: darkblue !important; /* Change to a darker shade on hover */
+  border-color: darkblue !important;
+}
+
+
+/* Spinner Styles */
+.spinner {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+

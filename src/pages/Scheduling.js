@@ -26,10 +26,46 @@ const Scheduling = () => {
   const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
-  const { selectedDog, setSelectedDog, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots } = useBooking();
+  const { selectedDog, setSelectedDog, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots, handleBookMonth } = useBooking();
   const { showBookWeekModal, setShowBookWeekModal } = useModal();
+  const { showBookMonthModal, setShowBookMonthModal } = useModal();
 
+  // Open and close modal handlers
+  const handleOpenBookMonthModal = (timeSlot) => {
+    setSelectedTimeSlot(timeSlot);
+  
+    // Use the new helper function
+    const { startOfMonth, endOfMonth } = getStartAndEndOfMonth(selectedDate);
+  
+    // Filter bookings to find unavailable times during the month
+    const unavailable = bookings.filter((booking) => {
+      const bookingDate = new Date(booking.walkId.startTime);
+      return (
+        bookingDate >= new Date(startOfMonth) &&
+        bookingDate <= new Date(endOfMonth) &&
+        bookingDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
+          timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      );
+    });
+  
+    // Map unavailable times to an array with date and time
+    setUnavailableTimeSlots(unavailable.map((booking) => {
+      const unavailableTime = new Date(booking.walkId.startTime);
+      return {
+        date: unavailableTime.toDateString(),
+        time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+    }));
+  
+    setShowBookMonthModal(true);
+  };
+  
+  
 
+  const handleCloseBookMonthModal = () => {
+    setSelectedTimeSlot(null);
+    setShowBookMonthModal(false);
+  };
 
   const handleOpenBookWeekModal = (timeSlot) => {
     setSelectedTimeSlot(timeSlot);
@@ -62,6 +98,17 @@ const Scheduling = () => {
     setSelectedTimeSlot(null);
     setShowBookWeekModal(false);
   };
+
+  function getStartAndEndOfMonth(date) {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    
+    return {
+      startOfMonth: startOfMonth.toDateString(),
+      endOfMonth: endOfMonth.toDateString(),
+    };
+  }
+  
 
   function getStartAndEndOfWeek(date) {
     const startOfWeek = new Date(date);
@@ -304,9 +351,9 @@ const Scheduling = () => {
                     {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     
                     {/* Book Week Button */}
-                    <Button 
-                      onClick={() => handleOpenBookWeekModal(timeSlot)} variant="warning"
-                      style={{ marginRight: '10px', backgroundColor: 'orange'}}
+                    <Button
+                      onClick={() => handleOpenBookWeekModal(timeSlot)}
+                      className="book-week-button"
                       disabled={loadingWeekSlots[timeSlot.toISOString()]} // Only disable for the specific week slot
                     >
                       {loadingWeekSlots[timeSlot.toISOString()] ? (
@@ -318,18 +365,27 @@ const Scheduling = () => {
                         "Book Week"
                       )}
                     </Button>
-              
+
                     {/* Book Month Button */}
-                    <Button 
-                      style={{ marginRight: '10px', backgroundColor: 'red'}}
+                    <Button
+                      onClick={() => handleOpenBookMonthModal(timeSlot)}
+                      className="book-month-button"
+                      disabled={loadingMonthSlots[timeSlot.toISOString()]} // Only disable for the specific month slot
                     >
-                      Book Month
+                      {loadingMonthSlots[timeSlot.toISOString()] ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Booking...
+                        </>
+                      ) : (
+                        "Book Month"
+                      )}
                     </Button>
-              
+
                     {/* Book Walk Button */}
                     <Button
-                      variant="primary"
                       onClick={() => handleBookWalk(timeSlot, authState, fetchAllBookings)}
+                      className="book-walk-button"
                       disabled={loadingSlots[timeSlot.toISOString()]} // Disable the button for the specific slot if loading
                     >
                       {loadingSlots[timeSlot.toISOString()] ? (
@@ -341,6 +397,8 @@ const Scheduling = () => {
                         "Book Walk"
                       )}
                     </Button>
+
+
                   </ListGroup.Item>
                 ))}
               </ListGroup>
@@ -390,6 +448,50 @@ const Scheduling = () => {
           </Card>
         </Col>
       </Row>
+
+
+      {/* BookMonth Modal */}
+      <Modal show={showBookMonthModal} onHide={handleCloseBookMonthModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Monthly Booking</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedTimeSlot && (
+            <>
+              <p>
+                This Month runs from <strong>{getStartAndEndOfMonth(selectedTimeSlot).startOfMonth}</strong> to <strong>{getStartAndEndOfMonth(selectedTimeSlot).endOfMonth}</strong>.
+              </p>
+              <p>Below dates are unavailable. Continue booking?</p>
+
+              {unavailableTimeSlots.length > 0 ? (
+                <ListGroup>
+                  {unavailableTimeSlots.map((slot, index) => (
+                    <ListGroup.Item key={index}>
+                      {slot.date} - {slot.time}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              ) : (
+                <p>No unavailable time slots for this Month.</p>
+              )}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseBookMonthModal}>
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              handleBookMonth(selectedTimeSlot, authState, fetchAllBookings, unavailableTimeSlots);
+              handleCloseBookMonthModal();
+            }}
+          >
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* BookWeek Modal */}
       <Modal show={showBookWeekModal} onHide={handleCloseBookWeekModal}>
