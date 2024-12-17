@@ -25,11 +25,6 @@ export const BookingProvider = ({ children }) => {
   const handleBookMonth = async (timeSlot, authState, fetchBookings, unavailableTimes = []) => {
     console.log("calling BookMonth");
   
-    if (!selectedDog) {
-      alert("Please select a dog before booking.");
-      return;
-    }
-  
     const walkerId = '66c63ca7a283afffb1194d38'; // Replace with actual walker ID
     const ownerId = authState.user.id;
   
@@ -38,10 +33,20 @@ export const BookingProvider = ({ children }) => {
       const dates = [];
       const firstDayOfMonth = new Date(timeSlot.getFullYear(), timeSlot.getMonth(), 1);
       const lastDayOfMonth = new Date(timeSlot.getFullYear(), timeSlot.getMonth() + 1, 0);
-  
+    
+      // Get today's date for comparison
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set time to midnight to ignore time differences
+    
       for (let day = firstDayOfMonth; day <= lastDayOfMonth; day.setDate(day.getDate() + 1)) {
         const date = new Date(day);
         date.setHours(timeSlot.getHours(), timeSlot.getMinutes(), 0, 0);
+    
+        // Skip dates that are today or earlier
+        if (date <= today) {
+          continue;
+        }
+    
         dates.push(new Date(date));
       }
       return dates;
@@ -206,11 +211,6 @@ export const BookingProvider = ({ children }) => {
   const handleBookWeek = async (timeSlot, authState, fetchBookings, unavailableTimes = []) => {
     console.log("calling BookWeek");
   
-    if (!selectedDog) {
-      alert("Please select a dog before booking.");
-      return;
-    }
-  
     const walkerId = '66c63ca7a283afffb1194d38'; // Replace with actual walker ID
     const ownerId = authState.user.id;
   
@@ -229,6 +229,14 @@ export const BookingProvider = ({ children }) => {
         const date = new Date(monday);
         date.setDate(monday.getDate() + i);
         date.setHours(timeSlot.getHours(), timeSlot.getMinutes(), 0, 0);
+  
+        // Skip dates that are today or earlier
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (date <= today) {
+          continue;
+        }
+  
         dates.push(date);
       }
       return dates;
@@ -401,11 +409,13 @@ export const BookingProvider = ({ children }) => {
 
 
   const handleBookWalk = async (timeSlot, authState, fetchBookings) => {
-    console.log("calling BookWalk")
+
     if (!selectedDog) {
-      alert('Please select a dog before booking.');
+      alert("Please select a dog before booking.");
       return;
     }
+    
+    console.log("calling BookWalk")
   
     const walkerId = '66c63ca7a283afffb1194d38'; // Replace with actual walker ID
     const ownerId = authState.user.id;

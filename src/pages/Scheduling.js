@@ -32,13 +32,19 @@ const Scheduling = () => {
 
   // Open and close modal handlers
   const handleOpenBookMonthModal = (timeSlot) => {
+    
+    if (!selectedDog) {
+      alert("Please select a dog before booking.");
+      return;
+    }
+
     setSelectedTimeSlot(timeSlot);
   
-    // Use the new helper function
+    // Get the start and end of the month for the selected date
     const { startOfMonth, endOfMonth } = getStartAndEndOfMonth(selectedDate);
   
     // Filter bookings to find unavailable times during the month
-    const unavailable = bookings.filter((booking) => {
+    const unavailableFromBookings = bookings.filter((booking) => {
       const bookingDate = new Date(booking.walkId.startTime);
       return (
         bookingDate >= new Date(startOfMonth) &&
@@ -48,17 +54,58 @@ const Scheduling = () => {
       );
     });
   
-    // Map unavailable times to an array with date and time
-    setUnavailableTimeSlots(unavailable.map((booking) => {
-      const unavailableTime = new Date(booking.walkId.startTime);
-      return {
-        date: unavailableTime.toDateString(),
-        time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-    }));
+    // Add logic to include times from the start of the month to today's date
+    const today = new Date();
+    const unavailableFromPastDays = [];
+    if (today >= new Date(startOfMonth)) {
+      let currentDate = new Date(startOfMonth);
   
+      while (currentDate <= today) {
+        unavailableFromPastDays.push({
+          date: currentDate.toDateString(),
+          time: timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+        currentDate.setDate(currentDate.getDate() + 1); // Increment day
+      }
+    }
+  
+    // Combine and remove duplicates by using a Set
+    const allUnavailableTimeSlots = [];
+  
+    const seen = new Set(); // To track unique "date + time" combinations
+  
+    // Add unavailable times from bookings
+    unavailableFromBookings.forEach((booking) => {
+      const unavailableTime = new Date(booking.walkId.startTime);
+      const key = `${unavailableTime.toDateString()}-${unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  
+      if (!seen.has(key)) {
+        seen.add(key);
+        allUnavailableTimeSlots.push({
+          date: unavailableTime.toDateString(),
+          time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      }
+    });
+  
+    // Add unavailable times from past days
+    unavailableFromPastDays.forEach((pastTime) => {
+      const key = `${pastTime.date}-${pastTime.time}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        allUnavailableTimeSlots.push(pastTime);
+      }
+    });
+  
+    // Sort all unavailable times chronologically
+    allUnavailableTimeSlots.sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`));
+  
+    // Set unavailable time slots and open modal
+    setUnavailableTimeSlots(allUnavailableTimeSlots);
     setShowBookMonthModal(true);
   };
+  
+  
   
   
 
@@ -68,31 +115,81 @@ const Scheduling = () => {
   };
 
   const handleOpenBookWeekModal = (timeSlot) => {
+    
+    if (!selectedDog) {
+      alert("Please select a dog before booking.");
+      return;
+    }
+    
     setSelectedTimeSlot(timeSlot);
   
-    // Check for unavailable times during the week
+    // Get the start and end of the week for the selected date
     const { startOfWeek, endOfWeek } = getStartAndEndOfWeek(selectedDate);
-    const unavailable = bookings.filter((booking) => {
+  
+    // Filter bookings to find unavailable times during the week
+    const unavailableFromBookings = bookings.filter((booking) => {
       const bookingDate = new Date(booking.walkId.startTime);
       return (
         bookingDate >= new Date(startOfWeek) &&
         bookingDate <= new Date(endOfWeek) &&
-        new Date(booking.walkId.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
+        bookingDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
           timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       );
     });
   
-    // Set unavailable time slots with both date and time
-    setUnavailableTimeSlots(unavailable.map((booking) => {
-      const unavailableTime = new Date(booking.walkId.startTime);
-      return {
-        date: unavailableTime.toDateString(),
-        time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-    }));
+    // Add logic to include times from the start of the week to today's date
+    const today = new Date();
+    const unavailableFromPastDays = [];
+    if (today >= new Date(startOfWeek)) {
+      let currentDate = new Date(startOfWeek);
   
+      while (currentDate <= today) {
+        unavailableFromPastDays.push({
+          date: currentDate.toDateString(),
+          time: timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+        currentDate.setDate(currentDate.getDate() + 1); // Increment day
+      }
+    }
+  
+    // Combine and remove duplicates by using a Set
+    const allUnavailableTimeSlots = [];
+  
+    const seen = new Set(); // To track unique "date + time" combinations
+  
+    // Add unavailable times from bookings
+    unavailableFromBookings.forEach((booking) => {
+      const unavailableTime = new Date(booking.walkId.startTime);
+      const key = `${unavailableTime.toDateString()}-${unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  
+      if (!seen.has(key)) {
+        seen.add(key);
+        allUnavailableTimeSlots.push({
+          date: unavailableTime.toDateString(),
+          time: unavailableTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        });
+      }
+    });
+  
+    // Add unavailable times from past days
+    unavailableFromPastDays.forEach((pastTime) => {
+      const key = `${pastTime.date}-${pastTime.time}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        allUnavailableTimeSlots.push(pastTime);
+      }
+    });
+  
+    // Sort all unavailable times chronologically
+    allUnavailableTimeSlots.sort((a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`));
+  
+    // Set unavailable time slots and open modal
+    setUnavailableTimeSlots(allUnavailableTimeSlots);
     setShowBookWeekModal(true);
   };
+  
+  
+  
 
   const handleCloseBookWeekModal = () => {
     setSelectedTimeSlot(null);
