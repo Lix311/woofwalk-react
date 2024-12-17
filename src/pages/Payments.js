@@ -63,7 +63,6 @@ const Payments = () => {
           <tr>
             <th>Date</th>
             <th>Amount</th>
-            <th>Description</th>
             <th>Status</th> {/* New column for payment status */}
           </tr>
         </thead>
@@ -72,7 +71,6 @@ const Payments = () => {
             <tr key={index}>
               <td>{new Date(payment.createdAt).toLocaleDateString()}</td>
               <td>${payment.amount.toFixed(2)}</td>
-              <td>{payment.paymentMethod}</td>
               <td style={{ color: payment.status === 'completed' ? 'green' : (payment.status === 'pending' || payment.status === 'failed' ? 'red' : 'black') }}>
                 {payment.status === 'completed' ? 'PAID' :
                 (payment.status === 'pending' || payment.status === 'failed') ? 'UNPAID' :

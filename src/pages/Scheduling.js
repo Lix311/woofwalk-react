@@ -26,7 +26,7 @@ const Scheduling = () => {
   const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
-  const { selectedDog, setSelectedDog, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots, handleBookMonth } = useBooking();
+  const { selectedDog, setSelectedDog, selectedWalkTime, setSelectedWalkTime, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots, handleBookMonth } = useBooking();
   const { showBookWeekModal, setShowBookWeekModal } = useModal();
   const { showBookMonthModal, setShowBookMonthModal } = useModal();
 
@@ -35,6 +35,11 @@ const Scheduling = () => {
     
     if (!selectedDog) {
       alert("Please select a dog before booking.");
+      return;
+    }
+
+    if (!selectedWalkTime) {
+      alert("Please select a time before booking.");
       return;
     }
 
@@ -115,33 +120,47 @@ const Scheduling = () => {
   };
 
   const handleOpenBookWeekModal = (timeSlot) => {
-    
     if (!selectedDog) {
       alert("Please select a dog before booking.");
       return;
     }
-    
+
+    if (!selectedWalkTime) {
+      alert("Please select a time before booking.");
+      return;
+    }
+  
     setSelectedTimeSlot(timeSlot);
   
     // Get the start and end of the week for the selected date
     const { startOfWeek, endOfWeek } = getStartAndEndOfWeek(selectedDate);
   
+    // Ensure startOfWeek and endOfWeek are Date objects
+    const startOfWeekDate = new Date(startOfWeek);
+    const endOfWeekDate = new Date(endOfWeek);
+  
+    // Normalize to ensure startOfWeek and endOfWeek have the same time format as booking.walkId.startTime
+    startOfWeekDate.setHours(0, 0, 0, 0); // Set to midnight of the start day
+    endOfWeekDate.setHours(23, 59, 59, 999); // Set to the last moment of the end day
+  
     // Filter bookings to find unavailable times during the week
     const unavailableFromBookings = bookings.filter((booking) => {
       const bookingDate = new Date(booking.walkId.startTime);
+      
+      // Check if the booking date is within the start and end of the week
       return (
-        bookingDate >= new Date(startOfWeek) &&
-        bookingDate <= new Date(endOfWeek) &&
-        bookingDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
-          timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        bookingDate >= startOfWeekDate &&
+        bookingDate <= endOfWeekDate &&
+        bookingDate.getHours() === timeSlot.getHours() &&
+        bookingDate.getMinutes() === timeSlot.getMinutes()
       );
     });
   
     // Add logic to include times from the start of the week to today's date
     const today = new Date();
     const unavailableFromPastDays = [];
-    if (today >= new Date(startOfWeek)) {
-      let currentDate = new Date(startOfWeek);
+    if (today >= startOfWeekDate) {
+      let currentDate = new Date(startOfWeekDate);
   
       while (currentDate <= today) {
         unavailableFromPastDays.push({
@@ -154,7 +173,6 @@ const Scheduling = () => {
   
     // Combine and remove duplicates by using a Set
     const allUnavailableTimeSlots = [];
-  
     const seen = new Set(); // To track unique "date + time" combinations
   
     // Add unavailable times from bookings
@@ -189,8 +207,6 @@ const Scheduling = () => {
   };
   
   
-  
-
   const handleCloseBookWeekModal = () => {
     setSelectedTimeSlot(null);
     setShowBookWeekModal(false);
@@ -440,6 +456,18 @@ const Scheduling = () => {
                   ))}
                 </Form.Control>
               </Form.Group>
+              <Form.Group controlId="walkTimeSelect">
+                <Form.Label>Select Walk Time</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={selectedWalkTime}
+                  onChange={(e) => setSelectedWalkTime(e.target.value)}
+                >
+                  <option value="">Select Walk Time</option>
+                  <option value="30">30 mins</option>
+                  <option value="60">1 hour</option>
+                </Form.Control>
+              </Form.Group>
               <Card.Title className="mt-4">Available Times for {selectedDate.toDateString()}</Card.Title>
               {availableTimes.length > 0 ? (
                 <ListGroup>
@@ -527,7 +555,11 @@ const Scheduling = () => {
                       <ListGroup.Item key={booking._id} className="d-flex justify-content-between align-items-center">
                         <div>
                           <strong>Dog:</strong> {booking.dogId.name} <br />
-                          <strong>Date:</strong> {new Date(booking.walkId.startTime).toLocaleString()}
+                          <strong>Date:</strong> {new Date(booking.walkId.startTime).toLocaleString()} <br />
+                          <strong>Time:</strong> {`${booking.walkId.walkTime === "30" ? "30 Mins" : "1 Hour"}`}
+
+
+
                         </div>
                         {!isPastBooking && (
                           <Button

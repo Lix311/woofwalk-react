@@ -17,9 +17,11 @@ const BASE_URL="http://localhost:5000"
 
 export const BookingProvider = ({ children }) => {
   const [selectedDog, setSelectedDog] = useState(null);
+  const [selectedWalkTime, setSelectedWalkTime] = useState(null); // Default walk time (30 mins)
   const [loadingSlots, setLoadingSlots] = useState({}); // Track loading state for each slot
   const [loadingWeekSlots, setLoadingWeekSlots] = useState({});
   const [loadingMonthSlots, setLoadingMonthSlots] = useState({});
+  let isCancelling = false;
 
 
   const handleBookMonth = async (timeSlot, authState, fetchBookings, unavailableTimes = []) => {
@@ -93,6 +95,7 @@ export const BookingProvider = ({ children }) => {
       const newWalk = {
         startTime: day.toISOString(),
         endTime: new Date(day.getTime() + 60 * 60 * 1000).toISOString(), // 1-hour duration
+        walkTime: selectedWalkTime,
         dogId: selectedDog,
         walkerId: walkerId,
         location: {
@@ -145,7 +148,7 @@ export const BookingProvider = ({ children }) => {
   
         // Create the payment
         const paymentData = {
-          amount: 50.0, // Example amount
+          amount: selectedWalkTime === "30" ? 25.00 : 50.00,
           paymentMethod: "credit_card", // Or 'paypal', etc.
           bookingId: bookingId,
           ownerId: ownerId,
@@ -289,6 +292,7 @@ export const BookingProvider = ({ children }) => {
       const newWalk = {
         startTime: day.toISOString(),
         endTime: new Date(day.getTime() + 60 * 60 * 1000).toISOString(), // 1-hour duration
+        walkTime: selectedWalkTime,
         dogId: selectedDog,
         walkerId: walkerId,
         location: {
@@ -341,7 +345,7 @@ export const BookingProvider = ({ children }) => {
   
         // Create the payment
         const paymentData = {
-          amount: 50.0, // Example amount
+          amount: selectedWalkTime === "30" ? 25.00 : 50.00,
           paymentMethod: "credit_card", // Or 'paypal', etc.
           bookingId: bookingId, // Reference the booking
           ownerId: ownerId, // Who is paying
@@ -414,6 +418,11 @@ export const BookingProvider = ({ children }) => {
       alert("Please select a dog before booking.");
       return;
     }
+
+    if (!selectedWalkTime) {
+      alert("Please select a time before booking.");
+      return;
+    }
     
     console.log("calling BookWalk")
   
@@ -423,6 +432,7 @@ export const BookingProvider = ({ children }) => {
     const newWalk = {
       startTime: timeSlot.toISOString(),
       endTime: new Date(timeSlot.getTime() + 60 * 60 * 1000).toISOString(), // 1-hour duration
+      walkTime: selectedWalkTime,
       dogId: selectedDog,
       walkerId: walkerId,
       location: {
@@ -430,6 +440,8 @@ export const BookingProvider = ({ children }) => {
         lng: -74.0060  // Replace with the actual longitude
       }
     };
+
+    debugger 
 
     // Set loading state for this specific slot
   setLoadingSlots((prev) => ({
@@ -481,7 +493,7 @@ export const BookingProvider = ({ children }) => {
   
       // Step 3: Create the payment
       const paymentData = {
-        amount: 50.00, // Example amount
+        amount: selectedWalkTime === "30" ? 25.00 : 50.00,
         paymentMethod: 'credit_card', // Or 'paypal', etc.
         bookingId: bookingId, // Reference the booking
         ownerId: ownerId, // Who is paying
@@ -543,27 +555,36 @@ export const BookingProvider = ({ children }) => {
   
 
   const cancelBooking = async (bookingId, walkId, fetchBookings) => {
+    if (isCancelling) {
+      // If the function is already running, prevent further calls
+      return;
+    }
+  
     try {
-      // First delete the walk
+      isCancelling = true; // Set flag to true to indicate function is running
+  
+      // First, delete the walk
       await fetch(`${BASE_URL}/api/walks/${walkId}`, {
         method: 'DELETE',
       });
-
+  
       // Then delete the booking
       await fetch(`${BASE_URL}/api/bookings/${bookingId}`, {
         method: 'DELETE',
       });
-
+  
       console.log('Booking and walk canceled successfully.');
       fetchBookings();
     } catch (err) {
       console.error('Error canceling booking:', err);
       alert('Failed to cancel walk');
+    } finally {
+      isCancelling = false; // Reset flag to allow the function to be called again
     }
   };
 
   return (
-    <BookingContext.Provider value={{ selectedDog, setSelectedDog, handleBookWalk, handleBookWeek, handleBookMonth, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots }}>
+    <BookingContext.Provider value={{ selectedDog, setSelectedDog, selectedWalkTime, setSelectedWalkTime, handleBookWalk, handleBookWeek, handleBookMonth, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots }}>
       {children}
     </BookingContext.Provider>
   );
