@@ -14,6 +14,8 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [authState.token, toggleLoginModal]);
 
+  debugger 
+
   // If the user is not authenticated and not on the homepage, redirect to the homepage
   if (!authState.token && location.pathname !== '/') {
     return (

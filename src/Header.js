@@ -11,6 +11,7 @@ const Header = () => {
 
   const { token, user } = authState; // Destructure token and user from authState
 
+
   return (
     <Navbar sticky="top" expand="lg" style={{ backgroundColor: '#add8e6' }}>
       <Container>
@@ -32,6 +33,11 @@ const Header = () => {
         {/* Navbar Collapse */}
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mx-auto">
+            {/* Conditionally render the Admin link based on user role */}
+            {user?.role === 'admin' && (
+              <Nav.Link as={Link} to="/admin">Admin</Nav.Link>
+            )}
+
             <Nav.Link as={Link} to="/info">My Info</Nav.Link>
             <Nav.Link as={Link} to="/pets">My Pets</Nav.Link>
             <Nav.Link as={Link} to="/payments">Payments</Nav.Link>

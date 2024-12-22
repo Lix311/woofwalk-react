@@ -245,7 +245,7 @@ export const BookingProvider = ({ children }) => {
       return dates;
     };
   
-    const today = new Date();
+    //const today = new Date();
     const monday = getMonday(timeSlot);
     const weekDates = generateWeekDates(monday, timeSlot);
   
@@ -441,7 +441,7 @@ export const BookingProvider = ({ children }) => {
       }
     };
 
-    debugger 
+  
 
     // Set loading state for this specific slot
   setLoadingSlots((prev) => ({

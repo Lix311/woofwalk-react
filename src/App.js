@@ -13,6 +13,8 @@ import Layout from './Layout'; // Import Layout
 import AddPet from './AddPet'; // Import AddPet
 import VerifyEmail from './pages/VerifyEmail';
 import ResetPassword from './pages/ResetPassword';
+import AdminPage from './pages/Admin';
+import AdminRoute from './components/AdminRoute';
 
 function App() {
   return (
@@ -23,6 +25,10 @@ function App() {
         <Route path="/pets" element={<ProtectedRoute><Pets /></ProtectedRoute>} />
         <Route path="/schedule" element={<ProtectedRoute><Scheduling /></ProtectedRoute>} />
         <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
+
+        {/* Admin route - only accessible to admins */}
+        <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
