@@ -47,6 +47,7 @@ export function AuthProvider({ children }) {
       }
   
       const updatedUser = await response.json();
+      debugger 
   
       // Update authState with the new user info
       setAuthState((prevAuthState) => ({

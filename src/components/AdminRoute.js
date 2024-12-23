@@ -1,23 +1,29 @@
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const AdminRoute = ({ children }) => {
   const { authState } = useAuth();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Side effect: If the user is not authenticated or not an admin, redirect to homepage
-    if (!authState.token || authState.user?.role !== 'admin') {
-      // You can perform additional actions here if necessary
+    if (authState) {
+      setLoading(false); // Once the authState is available, stop the loading
     }
-  }, [authState]); // Dependency on authState to trigger effect when it changes
+  }, [authState]);
 
-  // If the user is not authenticated or not an admin, redirect to a fallback page
-  if (!authState.token || authState.user?.role !== 'admin') {
-    return <Navigate to="/" replace />; // Redirect non-admin users to the homepage
+  // Show a loading spinner while authState is being fetched
+  if (loading) {
+    return <div>Loading...</div>; // Or use a spinner component
   }
 
-  return children; // Render children if the user is authenticated and an admin
+  // If not authenticated or not an admin, redirect to homepage
+  if (!authState?.token || authState?.user?.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  // If the user is an authenticated admin, render the children
+  return children;
 };
 
 export default AdminRoute;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Table, Button, ButtonGroup } from 'react-bootstrap';
+import AdminScheduling from './AdminScheduling';
 
 const AdminPage = () => {
   const { authState } = useAuth();
@@ -27,7 +28,7 @@ const AdminPage = () => {
 
         const data = await response.json();
         setAdminData(data.data);
-        debugger
+        
       } catch (err) {
         setError(err.message);
       }

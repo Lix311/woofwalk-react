@@ -2,17 +2,18 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, ListGroup, Card, Button, Form, Modal } from 'react-bootstrap';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import './Scheduling.css';
+import './AdminScheduling.css';
 import { useAuth } from '../context/AuthContext';
 import { useBooking } from '../context/BookingsContext';
 import { useModal } from '../context/ModalContext';
 
 const BASE_URL = "http://localhost:5000";
 
-const Scheduling = () => {
+const AdminScheduling = () => {
   const [bookings, setBookings] = useState([]); // All bookings
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null); // Selected time slot for the modal
+  
 
 
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -20,13 +21,14 @@ const Scheduling = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [allDogs, setAllDogs] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [ownerDogs, setOwnerDogs] = useState([]);
 
   const [meetGreetScheduled, setMeetGreetScheduled] = useState(false);
   const maxSlotsPerDay = 10; // Updated to 10 slots per day
 
   const { authState } = useAuth();
-  const { selectedDog, setSelectedDog, selectedWalkTime, setSelectedWalkTime, handleBookWalk, handleBookWeek, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots, handleBookMonth } = useBooking();
+  const { selectedUser, setSelectedUser, selectedDog, setSelectedDog, selectedWalkTime, setSelectedWalkTime, cancelBooking, loadingSlots, loadingWeekSlots, loadingMonthSlots, handleAdminMonth, handleAdminWeek, handleAdminWalk } = useBooking();
   const { showBookWeekModal, setShowBookWeekModal } = useModal();
   const { showBookMonthModal, setShowBookMonthModal } = useModal();
 
@@ -120,6 +122,8 @@ const Scheduling = () => {
   };
 
   const handleOpenBookWeekModal = (timeSlot) => {
+    
+    
     if (!selectedDog) {
       alert("Please select a dog before booking.");
       return;
@@ -242,6 +246,10 @@ const Scheduling = () => {
     };
   }
 
+
+
+
+
   // Fetch all bookings
   const fetchAllBookings = useCallback(async () => {
     try {
@@ -274,28 +282,47 @@ const Scheduling = () => {
     }
   }, []);
 
-  // Fetch owner-specific dogs
-  const fetchOwnerDogs = useCallback(async () => {
-    if (authState.user) {
-      try {
-        const response = await fetch(`${BASE_URL}/api/dogs/owner/${authState.user.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch owner dogs');
-        }
-        const data = await response.json();
-        setOwnerDogs(data);
-      } catch (err) {
-        console.error('Error fetching owner dogs:', err);
-        setError('Failed to fetch owner dogs');
+
+  // Fetch all Users
+  const fetchAllUsers = useCallback(async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/users`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
       }
+      const data = await response.json();
+      setAllUsers(data);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to fetch users');
     }
-  }, [authState.user]);
+  }, []);
 
   useEffect(() => {
     fetchAllBookings();
     fetchAllDogs();
+    fetchAllUsers();
+  }, [fetchAllBookings, fetchAllDogs, fetchAllUsers]);
+
+  useEffect(() => {
+    const fetchOwnerDogs = async () => {
+      if (selectedUser) {
+        try {
+          const response = await fetch(`${BASE_URL}/api/dogs/owner/${selectedUser}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch owner dogs');
+          }
+          const data = await response.json();
+          setOwnerDogs(data);
+        } catch (err) {
+          console.error('Error fetching owner dogs:', err);
+          setError('Failed to fetch owner dogs');
+        }
+      }
+    };
+  
     fetchOwnerDogs();
-  }, [fetchAllBookings, fetchAllDogs, fetchOwnerDogs]);
+  }, [selectedUser]); // Trigger only when `selectedUser` changes
 
   useEffect(() => {
     const generateTimeSlots = () => {
@@ -429,9 +456,9 @@ const Scheduling = () => {
 
   return (
     <Container className="mt-4">
-      <h1 className="mb-4">Scheduling</h1>
+      <h1 className="mb-4">Admin Scheduling</h1>
       <Row>
-        <Col md={4}>
+        <Col md={6}>
           <Card>
             <Card.Body>
               <Card.Title>Select a Date</Card.Title>
@@ -443,14 +470,34 @@ const Scheduling = () => {
             </Card.Body>
           </Card>
         </Col>
-
-        <Col md={4}>
+  
+        <Col md={6}>
           <Card>
             <Card.Body>
               <Card.Title>Select a Dog</Card.Title>
-              <Form.Group controlId="selectDog">
+              <Form.Group controlId="selectUser">
+                <Form.Label>Select User</Form.Label>
+                <Form.Control
+                  as="select"
+                  onChange={(e) => setSelectedUser(e.target.value)}
+                  value={selectedUser}
+                >
+                  <option value="">Select a User</option>
+                  {allUsers.map((user) => (
+                    <option key={user._id} value={user._id}>
+                      {user.firstName + " " + user.lastName}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="selectDog" className="mt-3">
                 <Form.Label>Choose a Dog for the Walk</Form.Label>
-                <Form.Control as="select" onChange={(e) => setSelectedDog(e.target.value)} value={selectedDog}>
+                <Form.Control
+                  as="select"
+                  onChange={(e) => setSelectedDog(e.target.value)}
+                  value={selectedDog}
+                  disabled={!selectedUser}
+                >
                   <option value="">Select a Dog</option>
                   {ownerDogs.map((dog) => (
                     <option key={dog._id} value={dog._id}>
@@ -459,7 +506,7 @@ const Scheduling = () => {
                   ))}
                 </Form.Control>
               </Form.Group>
-              <Form.Group controlId="walkTimeSelect">
+              <Form.Group controlId="walkTimeSelect" className="mt-3">
                 <Form.Label>Select Walk Time</Form.Label>
                 <Form.Control
                   as="select"
@@ -471,117 +518,88 @@ const Scheduling = () => {
                   <option value="60">1 hour</option>
                 </Form.Control>
               </Form.Group>
-              <Card.Title className="mt-4">Available Times for {selectedDate.toDateString()}</Card.Title>
+              <Card.Title className="mt-4">
+                Available Times for {selectedDate.toDateString()}
+              </Card.Title>
               {availableTimes.length > 0 ? (
                 <ListGroup>
-                {availableTimes.map((timeSlot, index) => (
-                  <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
-                    {timeSlot.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    
-                    {/* Book Week Button */}
-                    <Button
-                      onClick={() => handleOpenBookWeekModal(timeSlot)}
-                      className="book-week-button"
-                      disabled={loadingWeekSlots[timeSlot.toISOString()]} // Only disable for the specific week slot
+                  {availableTimes.map((timeSlot, index) => (
+                    <ListGroup.Item
+                      key={index}
+                      className="d-flex justify-content-between align-items-center"
                     >
-                      {loadingWeekSlots[timeSlot.toISOString()] ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Booking...
-                        </>
-                      ) : (
-                        "Book Week"
-                      )}
-                    </Button>
-
-                    {/* Book Month Button */}
-                    <Button
-                      onClick={() => handleOpenBookMonthModal(timeSlot)}
-                      className="book-month-button"
-                      disabled={loadingMonthSlots[timeSlot.toISOString()]} // Only disable for the specific month slot
-                    >
-                      {loadingMonthSlots[timeSlot.toISOString()] ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Booking...
-                        </>
-                      ) : (
-                        "Book Month"
-                      )}
-                    </Button>
-
-                    {/* Book Walk Button */}
-                    <Button
-                      onClick={() => handleBookWalk(timeSlot, authState, fetchAllBookings)}
-                      className="book-walk-button"
-                      disabled={loadingSlots[timeSlot.toISOString()]} // Disable the button for the specific slot if loading
-                    >
-                      {loadingSlots[timeSlot.toISOString()] ? (
-                        <>
-                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                          Booking...
-                        </>
-                      ) : (
-                        "Book Walk"
-                      )}
-                    </Button>
-
-
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-              
-              
+                      {timeSlot.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+  
+                      <Button
+                        onClick={() => handleOpenBookWeekModal(timeSlot)}
+                        className="book-week-button"
+                        disabled={loadingWeekSlots[timeSlot.toISOString()]}
+                      >
+                        {loadingWeekSlots[timeSlot.toISOString()] ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Booking...
+                          </>
+                        ) : (
+                          "Book Week"
+                        )}
+                      </Button>
+  
+                      <Button
+                        onClick={() => handleOpenBookMonthModal(timeSlot)}
+                        className="book-month-button"
+                        disabled={loadingMonthSlots[timeSlot.toISOString()]}
+                      >
+                        {loadingMonthSlots[timeSlot.toISOString()] ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Booking...
+                          </>
+                        ) : (
+                          "Book Month"
+                        )}
+                      </Button>
+  
+                      <Button
+                        onClick={() => handleAdminWalk(timeSlot, fetchAllBookings)}
+                        className="book-walk-button"
+                        disabled={loadingSlots[timeSlot.toISOString()]}
+                      >
+                        {loadingSlots[timeSlot.toISOString()] ? (
+                          <>
+                            <span
+                              className="spinner-border spinner-border-sm me-2"
+                              role="status"
+                              aria-hidden="true"
+                            ></span>
+                            Booking...
+                          </>
+                        ) : (
+                          "Book Walk"
+                        )}
+                      </Button>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               ) : (
                 <p>No available times for the selected date.</p>
               )}
             </Card.Body>
           </Card>
         </Col>
-
-        <Col md={4}>
-          <Card>
-          <Card.Body>
-              <Card.Title>Your Bookings for This Month</Card.Title>
-              <ListGroup>
-                {userBookings
-                  .filter((booking) => {
-                    const bookingDate = new Date(booking.walkId.startTime);
-                    const currentMonth = new Date().getMonth();
-                    const currentYear = new Date().getFullYear();
-                    return bookingDate.getMonth() === currentMonth && bookingDate.getFullYear() === currentYear;
-                  })
-                  .map((booking) => {
-                    const isPastBooking = new Date(booking.walkId.startTime) < new Date();
-
-                    return (
-                      <ListGroup.Item key={booking._id} className="d-flex justify-content-between align-items-center">
-                        <div>
-                          <strong>Dog:</strong> {booking.dogId.name} <br />
-                          <strong>Date:</strong> {new Date(booking.walkId.startTime).toLocaleString()} <br />
-                          <strong>Time:</strong> {`${booking.walkId.walkTime === "30" ? "30 Mins" : "1 Hour"}`}
-
-
-
-                        </div>
-                        {!isPastBooking && (
-                          <Button
-                            variant="danger"
-                            onClick={() => cancelBooking(booking._id, booking.walkId._id, fetchAllBookings)}
-                          >
-                            Cancel
-                          </Button>
-                        )}
-                      </ListGroup.Item>
-                    );
-                  })}
-              </ListGroup>
-            </Card.Body>
-          </Card>
-        </Col>
       </Row>
-
-
+  
       {/* BookMonth Modal */}
       <Modal show={showBookMonthModal} onHide={handleCloseBookMonthModal}>
         <Modal.Header closeButton>
@@ -594,7 +612,6 @@ const Scheduling = () => {
                 This Month runs from <strong>{getStartAndEndOfMonth(selectedTimeSlot).startOfMonth}</strong> to <strong>{getStartAndEndOfMonth(selectedTimeSlot).endOfMonth}</strong>.
               </p>
               <p>Below dates are unavailable. Continue booking?</p>
-
               {unavailableTimeSlots.length > 0 ? (
                 <ListGroup>
                   {unavailableTimeSlots.map((slot, index) => (
@@ -616,7 +633,7 @@ const Scheduling = () => {
           <Button
             variant="primary"
             onClick={() => {
-              handleBookMonth(selectedTimeSlot, authState, fetchAllBookings, unavailableTimeSlots);
+              handleAdminMonth(selectedTimeSlot, fetchAllBookings, unavailableTimeSlots);
               handleCloseBookMonthModal();
             }}
           >
@@ -624,7 +641,7 @@ const Scheduling = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
+  
       {/* BookWeek Modal */}
       <Modal show={showBookWeekModal} onHide={handleCloseBookWeekModal}>
         <Modal.Header closeButton>
@@ -637,7 +654,6 @@ const Scheduling = () => {
                 This week runs from <strong>{getStartAndEndOfWeek(selectedTimeSlot).startOfWeek}</strong> to <strong>{getStartAndEndOfWeek(selectedTimeSlot).endOfWeek}</strong>.
               </p>
               <p>Below dates are unavailable. Continue booking?</p>
-
               {unavailableTimeSlots.length > 0 ? (
                 <ListGroup>
                   {unavailableTimeSlots.map((slot, index) => (
@@ -659,7 +675,7 @@ const Scheduling = () => {
           <Button
             variant="primary"
             onClick={() => {
-              handleBookWeek(selectedTimeSlot, authState, fetchAllBookings, unavailableTimeSlots);
+              handleAdminWeek(selectedTimeSlot, fetchAllBookings, unavailableTimeSlots);
               handleCloseBookWeekModal();
             }}
           >
@@ -667,9 +683,9 @@ const Scheduling = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
     </Container>
   );
+  
 };
 
-export default Scheduling;
+export default AdminScheduling;

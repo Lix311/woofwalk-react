@@ -41,7 +41,10 @@ const Header = () => {
             <Nav.Link as={Link} to="/info">My Info</Nav.Link>
             <Nav.Link as={Link} to="/pets">My Pets</Nav.Link>
             <Nav.Link as={Link} to="/payments">Payments</Nav.Link>
-            <Nav.Link as={Link} to="/schedule">Scheduling</Nav.Link>
+            
+            <Nav.Link as={Link} to="/schedule">
+              {user?.role === 'admin' ? 'Admin Scheduling' : 'Scheduling'}
+            </Nav.Link>
           </Nav>
 
           {/* Welcome Message or Login/Signup Buttons */}

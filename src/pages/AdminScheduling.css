@@ -1,0 +1,131 @@
+.calendar-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .react-calendar {
+    width: 100%;
+    border: 3px solid #007bff; /* Increased border thickness and added color */
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .react-calendar__tile {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent; /* Add border to each tile for a clearer grid */
+  }
+  
+  .react-calendar__tile:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+  }
+  
+  .react-calendar__tile--fully-booked {
+    background-color: red !important;
+    color: white;
+  }
+  
+  .react-calendar__tile--user-booked {
+    background-color: green !important;
+    color: white;
+  }
+  
+  
+  
+  /* Styling for time slots section */
+  .time-slots-container {
+    margin-top: 20px;
+  }
+  
+  .time-slot {
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  /* Scheduling.css */
+  
+  /* Style for the Meet and Greet section */
+  .meet-greet-container {
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .meet-greet-container h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .meet-greet-container button {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  .meet-greet-container button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Specific Styles for Book Week */
+  .book-week-button {
+    background-color: orange !important;
+    border-color: orange !important;
+  }
+  
+  .book-week-button:hover {
+    background-color: darkorange !important; /* Change to a darker shade on hover */
+    border-color: darkorange !important;
+  }
+  
+  /* Specific Styles for Book Month */
+  .book-month-button {
+    background-color: red !important;
+    border-color: red !important;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  
+  .book-month-button:hover {
+    background-color: darkred !important; /* Change to a darker shade on hover */
+    border-color: darkred !important;
+  }
+  
+  /* Specific Styles for Book Walk */
+  .book-walk-button {
+    background-color: blue !important;
+    border-color: blue !important;
+  }
+  
+  .book-walk-button:hover {
+    background-color: darkblue !important; /* Change to a darker shade on hover */
+    border-color: darkblue !important;
+  }
+  
+  
+  /* Spinner Styles */
+  .spinner {
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  
+  
