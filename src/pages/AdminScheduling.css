@@ -33,15 +33,16 @@
     color: #007bff;
   }
   
-  .react-calendar__tile--fully-booked {
-    background-color: red !important;
+  .react-calendar__tile--any-booking {
+    background-color: purple;
     color: white;
   }
   
-  .react-calendar__tile--user-booked {
-    background-color: green !important;
+  .react-calendar__tile--fully-booked {
+    background-color: red;
     color: white;
   }
+  
   
   
   

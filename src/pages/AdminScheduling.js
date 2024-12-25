@@ -404,28 +404,25 @@ const AdminScheduling = () => {
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
       const dateStr = date.toDateString();
-
-
-
+  
+      // Find all bookings for the given date
       const allBookings = bookings.filter(
         (booking) => new Date(booking.walkId.startTime).toDateString() === dateStr
       );
-
-
+  
+      // If the day has any bookings, return green class
+      if (allBookings.length > 0) {
+        return 'react-calendar__tile--any-booking';
+      }
+  
+      // If the day is fully booked, return red class
       if (allBookings.length >= maxSlotsPerDay) {
         return 'react-calendar__tile--fully-booked';
-      }
-      
-      const userBookings = allBookings.filter(
-        (booking) => booking.ownerId._id === authState.user.id
-      );
-    
-      if (userBookings.length > 0) {
-        return 'react-calendar__tile--user-booked';
       }
     }
     return null;
   };
+  
 
   if (!authState.user) return <p>Please log in to view the scheduling page.</p>;
   if (loading) return <p>Loading...</p>;
