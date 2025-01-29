@@ -1,70 +1,99 @@
-# Getting Started with Create React App
+# 🐾 WoofWalk - Frontend 🐾
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+WoofWalk is a web app designed to make dog walking management easy and fun! Built with **React**, **React Router**, **Bootstrap**, and **Context API**, WoofWalk lets users manage their personal info, pets, payments, and schedule dog walks all in one place. 🐶💳
 
-## Available Scripts
+## 🚀 Try WoofWalk Now! 🎉
 
-In the project directory, you can run:
+You can try the app live on Heroku here: [WoofWalk on Heroku](https://woofwalk-1bca6421b0f9.herokuapp.com/) 🎉
 
-### `npm start`
+## 🛠️ Built With
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **React** - JavaScript library for building user interfaces ⚛️
+- **React Router** - For routing and navigation 🚗
+- **Bootstrap** - For responsive, mobile-first web design 📱
+- **Context API** - For managing state across the app ⚙️
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Features
 
-### `npm test`
+### 🧑‍🤝‍🧑 **Account Creation & Login**:
+- **Sign up** with your email and password 📝
+- **Email verification** required to log in (keep an eye on your inbox! 📧)
+- **Forgot your password?** No worries, you can reset it via email! 🔑
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 🔒 **Protected Pages**:
+Once logged in, you’ll have access to the following pages:
+- **My Info**: Update your personal details like first name, last name, email, phone, and address 🏡📱
+- **My Pets**: Add all the important details about your furry friends, including avatar, breed, age, weight, medical conditions, and vet info 🐕💉
+- **Payments**: View and manage your bookings, including paid/unpaid status, and easily pay through the integrated QR code 🏦💳
+- **Scheduling**: Choose your pet and select an available time slot for their walk 📅🐾 Track your bookings in a monthly list or a fun calendar view! 📆
 
-### `npm run build`
+### 📧 **Email Verification & Password Reset**:
+- **Email Verification**: Verify your email after creating an account 📬
+- **Password Reset**: Forgot your password? Simply reset it via email! 🔄
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 🐾 **Booking & Scheduling**:
+- Schedule your dog walks by selecting a pet and choosing a time 🕒
+- Get a **confirmation email** after booking 📧✅
+- You can cancel any booking you don’t need ❌
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📱 Pages and Functionality
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 🏠 **Home Page**:
+   - The landing page of WoofWalk, where you can explore the app and learn more about our dog walking services. 🌟
 
-### `npm run eject`
+### 👤 **My Info**:
+   - Manage your personal details:
+     - First Name
+     - Last Name
+     - Email
+     - Phone
+     - Address 🏡
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 🐕 **My Pets**:
+   - Add and manage your pets’ info:
+     - Pet Avatar
+     - Breed
+     - Age
+     - Weight
+     - Medical Conditions
+     - Vet Information 🐾
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 💳 **Payments**:
+   - View your bookings and their payment status:
+     - Paid or Unpaid 💰
+     - QR Code linked to WoofWalk's payment method for quick payments! 📲
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 🗓️ **Scheduling**:
+   - Select your pet 🐶 and pick an available walk time 🕒
+   - Get a **confirmation email** after booking 📧✅
+   - Cancel bookings anytime ❌
+   - View your bookings in a monthly list or calendar view 📅
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+## 💻 Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Clone this repository:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   ```bash
+   git clone https://github.com/Lix311/woofwalk-react
+   
+2. Switch to the react-local-v2 branch:
 
-### Code Splitting
+   ```bash
+   git checkout react-local-v2
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. Navigate to the project folder:
 
-### Analyzing the Bundle Size
+   ```bash
+   cd woofwalk-react
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+4. Install the dependencies:
 
-### Making a Progressive Web App
+   ```bash
+   npm install
+   
+5. Run the app locally:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+   ```bash
+   npm start
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
